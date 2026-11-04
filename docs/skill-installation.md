@@ -1,6 +1,6 @@
 # Installing and Updating the Liquid Glass Skill
 
-The Skill package lives at [`.agents/skills/liquid-glass/`](../.agents/skills/liquid-glass/SKILL.md). It follows the current Codex/Agent Skills folder format: one `SKILL.md` with `name` and `description`, optional focused references/assets/scripts, and optional `agents/openai.yaml` metadata.
+The Skill package lives at [`.agents/skills/liquid-glass/`](../.agents/skills/liquid-glass/SKILL.md). Platform-specific PowerShell and macOS/Linux copy instructions are in [the package INSTALL guide](../.agents/skills/liquid-glass/INSTALL.md). It follows the current Codex/Agent Skills folder format: one `SKILL.md` with `name` and `description`, optional focused references/assets/scripts, and optional `agents/openai.yaml` metadata.
 
 ## Install into a project
 
@@ -35,10 +35,11 @@ A manual copy also works: copy the complete `liquid-glass` folder—not only `SK
 From the repository root, run:
 
 ~~~bash
-python tests/skill-validation/validate_skill.py
+python .agents/skills/liquid-glass/scripts/inspect_project.py .
+python -m unittest discover -s .agents/skills/liquid-glass/tests -v
 ~~~
 
-The validator uses only the Python standard library. It checks Skill metadata, support files, local links, and the Web and native Android workflow fixtures. It validates package structure and scenario coverage; it does not substitute for building or visually testing a target application.
+The inventory helper is read-only and reports project evidence. The package tests use Python's standard library to exercise Skill metadata, local references, Web discovery, Android Java/XML discovery, minimum-SDK extraction, XML parsing, and the platform-specific worked workflows. These tests validate the Skill package and decision workflow; they do not substitute for building or visually testing a target application.
 
 ## Current scope
 
