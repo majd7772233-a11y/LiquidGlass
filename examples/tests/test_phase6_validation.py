@@ -69,7 +69,8 @@ class PhaseSixValidationTests(unittest.TestCase):
         for token in ("android-accessibility-report.json", "android-window-multisurface.xml",
                       "ACTIVITY_RESUMED activity=MainActivity", "uiautomator dump",
                       "minimum_action_target_dp", "MULTI_CAPTURE_BYTES",
-                      "wm size 720x1280", "wm size 1280x720",
+                      "wm size 720x1280", "wm size 1280x720", "wm user-rotation lock 1",
+                      "android-window-medium.xml", "android-window-landscape.xml", "height <= width", "width <= height",
                       "android-gles2-landscape.png", "extra_surfaces 3",
                       "SURFACE_COUNT main=1 additional=3 total=4"):
             self.assertIn(token, verify)

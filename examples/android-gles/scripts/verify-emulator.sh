@@ -64,12 +64,57 @@ sleep 2
 adb shell screencap -p /sdcard/liquid-glass-android-l3.png
 adb pull /sdcard/liquid-glass-android-l3.png artifacts/android-gles2-l3.png
 
-# Medium-density portrait configuration.
+# Medium-density portrait configuration: restart after wm overrides and prove the app was redrawn.
 adb shell wm size 720x1280
 adb shell wm density 320
-sleep 3
+adb shell wm user-rotation lock 0
+adb shell am force-stop org.liquidglass.reference.debug
+adb logcat -c
+adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity > artifacts/android-medium-launch.txt
+MEDIUM_READY=0
+for attempt in $(seq 1 35); do
+  adb logcat -d -s LiquidGlassDemo:I > artifacts/android-gl-medium.log
+  if grep -Fq "ACTIVITY_RESUMED activity=MainActivity" artifacts/android-gl-medium.log \
+    && grep -Fq "UI_READY activity=MainActivity" artifacts/android-gl-medium.log \
+    && grep -Fq "$READY_MARKER" artifacts/android-gl-medium.log \
+    && grep -Fq "WINDOW_FOCUS hasFocus=true" artifacts/android-gl-medium.log; then
+    MEDIUM_READY=1
+    break
+  fi
+  sleep 1
+done
+if [[ "$MEDIUM_READY" != "1" ]]; then
+  echo "Medium-density portrait did not render a focused Liquid Glass Activity." >&2
+  cat artifacts/android-gl-medium.log >&2
+  exit 1
+fi
+adb shell wm size > artifacts/android-medium-display-size.txt
+adb shell wm density > artifacts/android-medium-display-density.txt
+adb shell uiautomator dump /sdcard/liquid-glass-medium.xml >/dev/null
+adb pull /sdcard/liquid-glass-medium.xml artifacts/android-window-medium.xml
 adb shell screencap -p /sdcard/liquid-glass-android-medium.png
 adb pull /sdcard/liquid-glass-android-medium.png artifacts/android-gles2-medium-density.png
+python3 - <<'PY'
+import struct
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+xml_path = Path("artifacts/android-window-medium.xml")
+root = ET.parse(xml_path).getroot()
+nodes = list(root.iter("node"))
+package = "org.liquidglass.reference.debug"
+app = [node for node in nodes if node.attrib.get("package") == package]
+if not app or not any(n.attrib.get("text") == "Light, held in motion." for n in app):
+    raise SystemExit("Medium-density capture does not show the Liquid Glass Activity.")
+if root.attrib.get("rotation") not in {"0", "2"}:
+    raise SystemExit("Medium-density capture is not in portrait orientation.")
+png = Path("artifacts/android-gles2-medium-density.png").read_bytes()
+if len(png) < 100000 or png[:8] != b"\x89PNG\r\n\x1a\n":
+    raise SystemExit("Medium-density capture is empty or not a PNG.")
+width, height = struct.unpack(">II", png[16:24])
+if height <= width:
+    raise SystemExit(f"Medium-density screenshot is not portrait: {width}x{height}")
+PY
 
 # Verify system accessibility preferences are consumed by the app.
 adb shell settings put secure high_text_contrast_enabled 1
@@ -82,20 +127,65 @@ grep -Fq "GL_ACCESSIBILITY reduced_motion=true high_text_contrast=true" artifact
 adb shell settings put secure high_text_contrast_enabled 0
 adb shell settings put global animator_duration_scale 1
 
-# Landscape configuration; use 160 dpi so the 1280x720 logical viewport has room for the vertical controls.
-# The Activity no longer pins itself to portrait.
+# Landscape configuration: lock the real display rotation, relaunch, and validate both hierarchy and screenshot dimensions.
 adb shell settings put system accelerometer_rotation 0
-adb shell settings put system user_rotation 1
 adb shell wm size 1280x720
 adb shell wm density 160
-sleep 4
+adb shell wm user-rotation lock 1
+adb shell am force-stop org.liquidglass.reference.debug
+adb logcat -c
+adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity > artifacts/android-landscape-launch.txt
+LANDSCAPE_READY=0
+for attempt in $(seq 1 35); do
+  adb logcat -d -s LiquidGlassDemo:I > artifacts/android-gl-landscape.log
+  if grep -Fq "ACTIVITY_RESUMED activity=MainActivity" artifacts/android-gl-landscape.log \
+    && grep -Fq "UI_READY activity=MainActivity" artifacts/android-gl-landscape.log \
+    && grep -Fq "$READY_MARKER" artifacts/android-gl-landscape.log \
+    && grep -Fq "WINDOW_FOCUS hasFocus=true" artifacts/android-gl-landscape.log; then
+    LANDSCAPE_READY=1
+    break
+  fi
+  sleep 1
+done
+if [[ "$LANDSCAPE_READY" != "1" ]]; then
+  echo "Landscape did not render a focused Liquid Glass Activity." >&2
+  cat artifacts/android-gl-landscape.log >&2
+  exit 1
+fi
+adb shell wm size > artifacts/android-landscape-display-size.txt
+adb shell wm density > artifacts/android-landscape-display-density.txt
+adb shell wm user-rotation > artifacts/android-landscape-user-rotation.txt
+adb shell uiautomator dump /sdcard/liquid-glass-landscape.xml >/dev/null
+adb pull /sdcard/liquid-glass-landscape.xml artifacts/android-window-landscape.xml
 adb shell screencap -p /sdcard/liquid-glass-android-landscape.png
 adb pull /sdcard/liquid-glass-android-landscape.png artifacts/android-gles2-landscape.png
+python3 - <<'PY'
+import struct
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+xml_path = Path("artifacts/android-window-landscape.xml")
+root = ET.parse(xml_path).getroot()
+nodes = list(root.iter("node"))
+package = "org.liquidglass.reference.debug"
+app = [node for node in nodes if node.attrib.get("package") == package]
+if not app or not any(n.attrib.get("text") == "Light, held in motion." for n in app):
+    raise SystemExit("Landscape capture does not show the Liquid Glass Activity.")
+if root.attrib.get("rotation") not in {"1", "3"}:
+    raise SystemExit("UIAutomator hierarchy did not confirm a landscape rotation.")
+png = Path("artifacts/android-gles2-landscape.png").read_bytes()
+if len(png) < 100000 or png[:8] != b"\x89PNG\r\n\x1a\n":
+    raise SystemExit("Landscape capture is empty or not a PNG.")
+width, height = struct.unpack(">II", png[16:24])
+if width <= height:
+    raise SystemExit(f"Landscape screenshot is not horizontal: {width}x{height}")
+PY
 
 # Restore defaults, unlock the emulator, and exercise four independent refractive SDF surfaces.
 adb shell wm size reset
 adb shell wm density reset
 adb shell settings put system accelerometer_rotation 1
+adb shell wm user-rotation lock 0
 adb shell settings put system user_rotation 0
 adb shell input keyevent KEYCODE_WAKEUP || true
 adb shell wm dismiss-keyguard >/dev/null 2>&1 || true

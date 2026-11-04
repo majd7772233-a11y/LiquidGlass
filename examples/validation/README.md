@@ -49,7 +49,7 @@ Automated WebGL2 capture cases:
 | mobile-detailed | 390 × 844 | 2 (renderer capped at 1.65) | Dense fine-line/high-frequency pattern |
 | landscape-bright | 844 × 390 | 2 (renderer capped at 1.65) | Bright, wide layout |
 
-Android CI exercises the native app at its default emulator configuration, a 720 × 1280 / 320 dpi logical display, a 1280 × 720 landscape display, and a separate mode with one primary plus three additional refractive SDF surfaces (four independent refractive SDF surfaces in total). These are emulator scenarios, not device-family coverage.
+Android CI exercises the native app at its default emulator configuration, a 720 × 1280 / 320 dpi portrait display, a WindowManager-locked 1280 × 720 landscape display, and a separate mode with one primary plus three additional refractive SDF surfaces (four independent refractive SDF surfaces in total). The medium-density and landscape cases restart the Activity and validate its UI hierarchy, reported rotation, screenshot orientation, and minimum capture size; a blank or portrait-in-landscape screenshot fails CI. These are emulator scenarios, not device-family coverage.
 
 ## Accessibility quality gates
 
