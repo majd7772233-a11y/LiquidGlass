@@ -5,7 +5,7 @@ A portable Codex Skill for implementing and reviewing Liquid Glass interfaces ac
 - Entry point: [`SKILL.md`](SKILL.md)
 - Installation for ChatGPT Desktop on Windows: [`INSTALL.md`](INSTALL.md)
 - Project inspection helper: [`scripts/inspect_project.py`](scripts/inspect_project.py)
-- Worked workflows: [`examples/`](examples/)
+- Worked workflows: [`examples/README.md`](examples/README.md)
 - Platform-specific implementation guidance: [`docs/platform-adaptation/`](../../../docs/platform-adaptation/README.md)
 - Package tests: [`tests/`](tests/)
 - Planning and review templates: [`assets/`](assets/)
