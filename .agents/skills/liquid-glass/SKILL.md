@@ -5,6 +5,8 @@ description: Implement, adapt, review, or debug Liquid Glass and refractive glas
 
 # Liquid Glass Skill
 
+This is the Codex/local-workspace execution twin of [Liquid Glass Studio](../../../studio/README.md). Both use the same canonical visual specifications, platform rules, fidelity tiers, and validation standards. Studio executes through the connected GitHub app; this Skill executes in the local workspace. When shared knowledge changes, rebuild and test the Studio package using `studio/scripts/build_plugin_package.py`.
+
 Deliver a convincing, usable Liquid Glass implementation that fits the **actual host project**. The visual target is an optical surface with background transmission, shape-aware refraction/distortion where supported, readable depth and edge response, coherent highlights, and fluid interaction when required. It is not synonymous with a blurred translucent card.
 
 ## Mandatory workflow
@@ -61,6 +63,7 @@ Load only the references needed for the current task:
 - [Motion, accessibility, and performance](references/motion-accessibility-performance.md) — behavior and resilience.
 - [Validation and reporting](references/validation-and-reporting.md) — verification and final report format.
 - [Platform adaptation index](../../../docs/platform-adaptation/README.md) and [capability matrix](../../../docs/platform-adaptation/capability-matrix.md) — use when this repository is available to select a verified platform-family route.
+- [Liquid Glass Studio twin and package](../../../studio/README.md) — the ChatGPT execution adapter and canonical shared-knowledge packaging workflow.
 - [Android dependency and renderer catalog](../../../docs/platform-adaptation/android-library-catalog.md) — third-party options, versions, and compatibility limits.
 - [Platform worked workflows](examples/README.md) — Apple, Windows, Qt, Flutter, Unity, Unreal, and constrained target decision/validation fixtures.
 - [Implementation workflow](references/implementation-workflow.md) — integration sequence, failure handling, and change hygiene.

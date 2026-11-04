@@ -26,9 +26,16 @@ jobs:
         run: |
           python -m py_compile .agents/skills/liquid-glass/scripts/inspect_project.py
           python -m py_compile .agents/skills/liquid-glass/tests/test_skill_package.py
+          python -m py_compile studio/scripts/build_plugin_package.py
+          python -m py_compile studio/tests/test_studio_package.py
 
       - name: Run Skill package and platform adaptation tests
         run: python -m unittest discover -s .agents/skills/liquid-glass/tests -v
 
+      - name: Run Liquid Glass Studio package tests
+        run: python -m unittest discover -s studio/tests -v
+
       - name: Run read-only project inventory smoke test
-        run: python .agents/skills/liquid-glass/scripts/inspect_project.py .
+        run: |
+          python .agents/skills/liquid-glass/scripts/inspect_project.py .
+          python studio/scripts/build_plugin_package.py --check

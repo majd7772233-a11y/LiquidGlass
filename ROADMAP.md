@@ -22,7 +22,7 @@ A requested roadmap phase is one complete delivery unit. The agent must finish e
 | 1. Visual specification | Complete | Testable, platform-neutral material, interaction, motion, and reference criteria |
 | 2. Core coding Skill | Complete | Portable Codex Skill with project inspection, renderer selection, install guide, web and Android workflows, and package tests |
 | 3. Platform adaptation guidance | Complete | Backdrop/capability matrix, seven platform-family guides, nine worked workflow fixtures, and CI validation |
-| 4. Liquid Glass Studio workflow | Not started | Dedicated assistant/plugin capabilities and tool contracts |
+| 4. Liquid Glass Studio workflow | In progress | ChatGPT execution twin, bound GitHub repository operations, portable package, and host availability verification |
 | 5. Reference implementations | Not started | Small, runnable examples demonstrating distinct material capabilities |
 | 6. Validation, accessibility, and performance | Not started | Reproducible visual and runtime quality gates |
 | 7. Packaging and release | Not started | Versioned, documented, installable deliverables |
@@ -164,28 +164,33 @@ Acceptance:
 
 ## Phase 4 — Liquid Glass Studio assistant/plugin workflow
 
-**Goal:** create a focused assistant product that helps users move from a visual reference to an integrated, reviewed implementation.
+<badge>In progress</badge>
 
-Planned capabilities:
-1. **Reference inspection:** analyze supplied screenshots or video frames and extract material, geometry, lighting, motion, and interaction characteristics.
-2. **Visual specification:** turn observations into a structured, editable implementation brief with explicit confidence and unknowns.
-3. **Project diagnosis:** identify platform, framework, rendering facilities, and constraints from supplied project context.
-4. **Strategy selection:** compare viable implementation paths and explain trade-offs.
-5. **Code generation/adaptation:** produce platform-appropriate code that fits the host project rather than an isolated generic snippet.
-6. **Implementation review:** compare code and captures against the specification, identify missing optical/interaction features, and recommend fixes.
-7. **Performance/accessibility review:** identify expensive rendering patterns, quality-tier options, and accessibility gaps.
+**Goal:** create Liquid Glass Studio as the ChatGPT-side execution twin of `$liquid-glass`, using the same visual/platform knowledge and actual GitHub repository actions. The plugin is a portable Skill package bound to the existing GitHub connector; it does not create a duplicate GitHub server or claim local-machine access.
 
-Tasks:
-- Verify the current supported private-plugin creation and packaging workflow before choosing architecture.
-- Define tool names, inputs, outputs, validation, error handling, and boundaries before implementation.
-- Make reference analysis return evidence-based observations, not unsupported claims.
-- Keep code-writing operations explicit and scoped to user-provided projects.
-- Avoid duplicating capabilities already better handled by the Skill or the host coding agent.
+**Implemented capabilities:**
+1. **Reference inspection:** evidence-based analysis of supplied screenshots/frames, with confidence and unknowns.
+2. **Visual specification:** structured material, geometry, motion, semantics, fidelity, and validation brief.
+3. **Project diagnosis:** connected-repository inspection of source tree, framework, build, dependencies, renderer, and constraints.
+4. **Strategy selection:** comparison of native, existing libraries, custom GPU/drawing, and fallbacks.
+5. **Code implementation:** actual scoped GitHub repository edits and commits after an explicit change request.
+6. **Implementation review:** source/diff/capture review against the visual contract.
+7. **Performance/accessibility audit:** code-risk review plus measured evidence only when real profiling/tests are available.
 
-Acceptance:
-- Plugin installation/availability is verified in the intended environment.
-- Each implemented tool has a clear contract and meaningful tested behavior.
-- The workflow can guide a user from reference to a platform-aware implementation review.
+**Tasks:**
+- [x] Verify the supported private-plugin creation and account-package workflow; use the existing GitHub app binding because the Sites MCP server reference is unavailable in this environment.
+- [x] Define seven Studio workflow contracts with inputs, outputs, evidence, validation, and error boundaries.
+- [x] Make reference analysis evidence-based and confidence-labelled.
+- [x] Keep code-writing operations explicit and scoped to user-authorized projects.
+- [x] Establish shared knowledge synchronization from canonical Skill/specification files into the portable Studio package.
+- [x] Add a reproducible plugin package builder and automated manifest, binding, reference, and archive tests.
+- [ ] Create the private plugin in the user's account and verify its host installation/availability and GitHub binding.
+
+**Acceptance:**
+- The private plugin is saved in the account and its host availability/GitHub binding are verified, or the remaining user activation step is precisely recorded.
+- Each Studio workflow has a clear contract and meaningful automated regression coverage.
+- The workflow can take a request from reference to platform-aware repository implementation and review through the GitHub connector.
+- Studio and `$liquid-glass` use the same packaged specifications and L0–L3 definitions.
 - The plugin does not claim to render or change the ChatGPT application interface itself.
 
 ## Phase 5 — Reference implementations

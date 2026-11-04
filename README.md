@@ -15,9 +15,10 @@ This is not a synonym for ordinary glassmorphism. The target combines background
 - [Platform adaptation guide](docs/platform-adaptation/README.md) — capability matrix and verified family-specific approaches.
 - [Codex Skill](.agents/skills/liquid-glass/SKILL.md) — platform-neutral coding Skill for implementation and review.
 - [Skill installation](.agents/skills/liquid-glass/INSTALL.md) — repository-local and personal installation/update instructions.
+- [Liquid Glass Studio](studio/README.md) — ChatGPT-side execution twin, architecture, GitHub binding, and private plugin package.
 
 ## Working principle
 
 Study the references, inspect the target project's actual platform and rendering capabilities, then choose the strongest technically sound implementation for that environment. Do not force one framework or rendering engine onto every platform, and do not claim visual parity without a buildable implementation and visual validation.
 
-The reusable, platform-aware Codex Skill is now available at `.agents/skills/liquid-glass/`. The dedicated Liquid Glass Studio assistant/plugin workflow remains planned in the roadmap and is not implied to exist yet.
+The reusable, platform-aware Codex Skill is available at `.agents/skills/liquid-glass/`. Liquid Glass Studio is maintained alongside it as the ChatGPT-side execution twin; see `studio/README.md` for its private plugin package and connected-GitHub execution model.

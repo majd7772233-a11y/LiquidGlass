@@ -10,7 +10,7 @@ The goal is to reproduce the visual behavior shown by the project's reference as
 
 The repository is intended to deliver:
 1. A platform-aware, language-agnostic coding Skill that can inspect a project and choose a suitable implementation strategy.
-2. A dedicated **Liquid Glass Studio** assistant/plugin workflow for analyzing references, planning implementations, generating or adapting code, and reviewing results.
+2. **Liquid Glass Studio**, the ChatGPT-side execution twin of the Codex Skill, for reference analysis, project diagnosis, strategy selection, real GitHub repository implementation, and review.
 3. A set of validated implementation examples, platform notes, and visual/performance tests.
 
 Do not claim that the Skill, plugin, or complete cross-platform support already exists until the corresponding roadmap phases have actually been delivered.
@@ -33,7 +33,7 @@ A phase is complete only when its required deliverables exist, agree with one an
 
 ### Codex Skill entry point
 
-The portable Liquid Glass coding Skill lives at `.agents/skills/liquid-glass/SKILL.md`. Use `$liquid-glass` for explicit invocation; the description also supports automatic discovery for matching Liquid Glass implementation and review tasks. Its focused references, read-only project inventory helper, examples, and package tests are kept with the Skill directory. Follow [the installation guide](docs/skill-installation.md) when installing it for other workspaces. The Skill is separate from the later Liquid Glass Studio plugin phase.
+The portable Liquid Glass coding Skill lives at `.agents/skills/liquid-glass/SKILL.md`. Use `$liquid-glass` for explicit invocation; the description also supports automatic discovery for matching Liquid Glass implementation and review tasks. Its focused references, read-only project inventory helper, examples, and package tests are kept with the Skill directory. Follow [the installation guide](docs/skill-installation.md) when installing it for other workspaces. The Studio twin is maintained under `studio/`; its plugin package is rebuilt from the same canonical specifications and Skill references. The local and ChatGPT execution adapters differ, but the visual target and engineering rules must stay synchronized.
 
 Before every substantial task:
 
