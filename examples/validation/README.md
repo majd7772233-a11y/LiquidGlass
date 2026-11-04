@@ -80,6 +80,21 @@ The browser report contains a reset, isolated 3-second single-page frame-pacing 
 - Estimated scene-texture memory is `width × height × 4` bytes for one RGBA8 off-screen texture; it excludes browser compositor surfaces, driver allocations, and other process memory.
 - The extension flag only reports whether `EXT_disjoint_timer_query_webgl2` is exposed. GPU execution time is not reported by this test.
 
+### Observed CI snapshot (2026-11-04)
+
+These are measured software-renderer diagnostics, deliberately recorded rather than hidden. They are **not physical-device acceptance numbers**:
+
+| Environment / scenario | Average frame interval | P95 interval | Approx. FPS | CPU GL submit P95 | Estimated scene texture |
+|---|---:|---:|---:|---:|---:|
+| Headless Chromium / SwiftShader, 1440×960 desktop L2/L3 | 152.77 ms | 266.80 ms | 6.5 | 0.90 ms | 5,529,600 bytes |
+| Android API 35 x86_64 / SwiftShader, four SDF surfaces | 281.31 ms | 775.20 ms | 3.6 | 278.74 ms | 8,294,400 bytes |
+
+The Chromium sample collected 18 frame intervals and all 18 exceeded 16.7 ms. The Android four-surface sample collected 19 callbacks and all 19 exceeded both 16.7 ms and 33.3 ms. These results show that the CI's software-rendered graphics path is slow under this workload; they do not establish how a phone GPU performs. In particular, CPU GL submission can be expensive under SwiftShader and is not a substitute for GPU duration.
+
+Evidence:
+- [WebGL2 validation run 41899401878](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899401878) — Chromium browser job passed, with the responsive/accessibility/fallback captures and JSON diagnostics.
+- [Android emulator run 41899729725](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899729725) — Android job passed, including L3 startup, density, test-only landscape layout, four-surface SDF workload, and profiling artifact.
+
 ### Android
 
 The renderer logs GL vendor/renderer/version, frame callback interval statistics, P95 frame interval, approximate FPS, intervals above 16.7/33.3 ms, CPU-side GL command-submission P95, and the app-owned RGBA FBO texture byte estimate. The profiling script preserves:
