@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "liquid-glass-studio",
+  "version": "0.1.0",
+  "description": "An execution-focused Liquid Glass assistant for reference analysis, repository diagnosis, platform-aware implementation, visual review, and performance/accessibility audits.",
+  "author": {
+    "name": "LiquidGlass project"
+  },
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "interface": {
+        "displayName": "Liquid Glass Studio",
+        "shortDescription": "Implement real Liquid Glass UI",
+        "longDescription": "Analyze supplied visual references, diagnose connected GitHub projects, choose platform-appropriate rendering paths, implement real Liquid Glass interfaces in repository files, and review fidelity, compatibility, performance, and accessibility. Studio shares the same specifications and engineering rules as the $liquid-glass Codex Skill. It uses the connected GitHub app for repository work; it does not claim local device access or modify ChatGPT's own interface.",
+        "developerName": "LiquidGlass project",
+        "category": "Developer Tools",
+        "capabilities": [],
+        "defaultPrompt": [
+          "Inspect this GitHub project and implement a real Liquid Glass interface.",
+          "Analyze this visual reference and adapt my project UI to it.",
+          "Review this implementation against the Liquid Glass specification and fix its gaps."
+        ]
+      }
+    }
+  }
+}
