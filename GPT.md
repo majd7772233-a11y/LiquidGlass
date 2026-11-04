@@ -31,6 +31,10 @@ A phase is complete only when its required deliverables exist, agree with one an
 
 ## 3. Source of truth and working order
 
+### Codex Skill entry point
+
+The portable Liquid Glass coding Skill lives at `.agents/skills/liquid-glass/SKILL.md`. Use `$liquid-glass` for explicit invocation; the description also supports automatic discovery for matching Liquid Glass implementation and review tasks. Its focused references, read-only project inventory helper, examples, and package tests are kept with the Skill directory. Follow [the installation guide](docs/skill-installation.md) when installing it for other workspaces. The Skill is separate from the later Liquid Glass Studio plugin phase.
+
 Before every substantial task:
 
 1. Read this file and the relevant sections of ROADMAP.md.
