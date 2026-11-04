@@ -46,6 +46,7 @@ class PhaseSixValidationTests(unittest.TestCase):
         self.assertIn("RENDERMODE_WHEN_DIRTY", activity)
         self.assertIn("framePump", activity)
         self.assertIn("isHighTextContrastEnabled", activity)
+        self.assertIn("high_text_contrast_enabled", activity)
         self.assertIn("isReducedMotionEnabled", activity)
         self.assertIn("dp(48)", activity)
         self.assertIn("extra_surfaces", activity)

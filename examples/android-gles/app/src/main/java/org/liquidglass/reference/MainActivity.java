@@ -2,7 +2,6 @@ package org.liquidglass.reference;
 
 import android.app.Activity;
 import android.animation.ValueAnimator;
-import android.view.accessibility.AccessibilityManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.graphics.Color;
@@ -57,8 +56,7 @@ public final class MainActivity extends Activity {
         Window window = getWindow();
         window.setStatusBarColor(Color.rgb(8, 13, 29));
         window.setNavigationBarColor(Color.rgb(8, 13, 29));
-        AccessibilityManager accessibility = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
-        highContrastEnabled = accessibility != null && accessibility.isHighTextContrastEnabled();
+        highContrastEnabled = isHighTextContrastEnabled();
         reducedMotionEnabled = isReducedMotionEnabled();
         android.util.Log.i("LiquidGlassDemo", "GL_ACCESSIBILITY reduced_motion=" + reducedMotionEnabled
                 + " high_text_contrast=" + highContrastEnabled);
@@ -280,6 +278,14 @@ public final class MainActivity extends Activity {
 
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    private boolean isHighTextContrastEnabled() {
+        try {
+            return Settings.Secure.getInt(getContentResolver(), "high_text_contrast_enabled", 0) == 1;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
     }
 
     private boolean isReducedMotionEnabled() {

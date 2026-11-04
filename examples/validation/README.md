@@ -49,7 +49,7 @@ Automated WebGL2 capture cases:
 | mobile-detailed | 390 × 844 | 2 (renderer capped at 1.65) | Dense fine-line/high-frequency pattern |
 | landscape-bright | 844 × 390 | 2 (renderer capped at 1.65) | Bright, wide layout |
 
-Android CI exercises the native app at its default emulator configuration, a 720 × 1280 / 320 dpi logical display, a 1280 × 720 landscape display, and a separate mode with one primary plus three additional refractive SDF surfaces. These are emulator scenarios, not device-family coverage.
+Android CI exercises the native app at its default emulator configuration, a 720 × 1280 / 320 dpi logical display, a 1280 × 720 landscape display, and a separate mode with one primary plus three additional refractive SDF surfaces (four independent refractive SDF surfaces in total). These are emulator scenarios, not device-family coverage.
 
 ## Accessibility quality gates
 
@@ -66,7 +66,7 @@ The demo responds to:
 
 ### Android
 
-Native controls expose content descriptions and use 48 dp action-button targets; the SeekBar has a 48 dp layout height. High-text-contrast mode is read from `AccessibilityManager`, and reduced animation is read from the system animator setting / `ValueAnimator` when available. The activity no longer locks the app to portrait. GL rendering uses `RENDERMODE_WHEN_DIRTY`; a frame pump is active only while playback or a morph needs animation and is removed while the activity is paused.
+Native controls expose content descriptions and use 48 dp action-button targets; the SeekBar has a 48 dp layout height. High-text-contrast mode is read from the system's `Settings.Secure` `high_text_contrast_enabled` flag (the public `AccessibilityManager` query is only available starting with API 36), and reduced animation is read from the system animator setting / `ValueAnimator` when available. The activity no longer locks the app to portrait. GL rendering uses `RENDERMODE_WHEN_DIRTY`; a frame pump is active only while playback or a morph needs animation and is removed while the activity is paused.
 
 The emulator script validates the TalkBack-facing accessibility node names and verifies hit-region dimensions from UIAutomator bounds. It does **not** certify TalkBack speech quality, switch access, magnification, or a real device's accessibility configuration. Those remain human checks on physical hardware.
 
