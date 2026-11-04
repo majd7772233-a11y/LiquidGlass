@@ -50,6 +50,9 @@ class PhaseSixValidationTests(unittest.TestCase):
         self.assertIn("isReducedMotionEnabled", activity)
         self.assertIn("dp(48)", activity)
         self.assertIn("extra_surfaces", activity)
+        self.assertIn("ACTIVITY_RESUMED activity=MainActivity", activity)
+        self.assertIn("UI_READY activity=MainActivity", activity)
+        self.assertIn("WINDOW_FOCUS hasFocus=true", activity)
         self.assertIn('morphButton.setContentDescription("Connect the liquid lens")', activity)
         self.assertNotIn('android:screenOrientation="portrait"', manifest)
         for token in ("PERF window_frames", "p95_frame_ms", "jank_gt_16_7",
@@ -60,12 +63,15 @@ class PhaseSixValidationTests(unittest.TestCase):
     def test_android_emulator_scripts_capture_accessibility_resizing_multi_surface_and_profile(self) -> None:
         verify = (ANDROID / "scripts" / "verify-emulator.sh").read_text(encoding="utf-8")
         profile = (ANDROID / "scripts" / "profile-emulator.sh").read_text(encoding="utf-8")
-        for token in ("android-accessibility-report.json", "minimum_action_target_dp",
+        for token in ("android-accessibility-report.json", "android-window-multisurface.xml",
+                      "ACTIVITY_RESUMED activity=MainActivity", "uiautomator dump",
+                      "minimum_action_target_dp", "MULTI_CAPTURE_BYTES",
                       "wm size 720x1280", "wm size 1280x720",
                       "android-gles2-landscape.png", "extra_surfaces 3",
                       "SURFACE_COUNT main=1 additional=3 total=4"):
             self.assertIn(token, verify)
-        for token in ("dumpsys gfxinfo", "dumpsys meminfo", "dumpsys battery",
+        for token in ("adb shell am force-stop \"$PACKAGE\"", "android-window-performance.xml",
+                      "multisurface_log", "dumpsys gfxinfo", "dumpsys meminfo", "dumpsys battery",
                       "dumpsys thermalservice", "SurfaceFlinger", "android-performance-summary.json",
                       "--ei extra_surfaces 3"):
             self.assertIn(token, profile)

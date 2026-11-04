@@ -219,6 +219,10 @@ public final class MainActivity extends Activity {
         root.addView(footer, footerParams);
 
         setContentView(root);
+        root.post(() -> android.util.Log.i("LiquidGlassDemo",
+                "UI_READY activity=MainActivity width=" + root.getWidth()
+                        + " height=" + root.getHeight()
+                        + " panel_width=" + panel.getWidth()));
     }
 
     private void updateLensRect() {
@@ -308,11 +312,17 @@ public final class MainActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         activityResumed = true;
+        android.util.Log.i("LiquidGlassDemo", "ACTIVITY_RESUMED activity=MainActivity");
         reducedMotionEnabled = isReducedMotionEnabled();
         if (renderer != null) renderer.setReducedMotion(reducedMotionEnabled);
         if (glView != null) glView.onResume();
         statusHandler.post(statusPoll);
         scheduleFrames();
+    }
+
+    @Override public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        android.util.Log.i("LiquidGlassDemo", "WINDOW_FOCUS hasFocus=" + hasFocus);
     }
 
     @Override protected void onPause() {

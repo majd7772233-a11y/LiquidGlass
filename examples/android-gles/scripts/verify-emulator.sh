@@ -92,23 +92,65 @@ sleep 4
 adb shell screencap -p /sdcard/liquid-glass-android-landscape.png
 adb pull /sdcard/liquid-glass-android-landscape.png artifacts/android-gles2-landscape.png
 
-# Restore defaults, then exercise four independent refractive SDF surfaces in one pass.
+# Restore defaults, unlock the emulator, and exercise four independent refractive SDF surfaces.
 adb shell wm size reset
 adb shell wm density reset
+adb shell settings put system accelerometer_rotation 1
 adb shell settings put system user_rotation 0
+adb shell input keyevent KEYCODE_WAKEUP || true
+adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
 sleep 3
 adb shell am force-stop org.liquidglass.reference.debug
 adb logcat -c
-adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity --ei extra_surfaces 3
+adb shell am start -W -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity --ei extra_surfaces 3 > artifacts/android-multisurface-launch.txt
 MULTI_READY=0
-for attempt in $(seq 1 20); do
+for attempt in $(seq 1 35); do
   adb logcat -d -s LiquidGlassDemo:I > artifacts/android-gl-multisurface.log
-  if grep -Fq "SURFACE_COUNT main=1 additional=3 total=4" artifacts/android-gl-multisurface.log && grep -Fq "$READY_MARKER" artifacts/android-gl-multisurface.log; then MULTI_READY=1; break; fi
+  if grep -Fq "SURFACE_COUNT main=1 additional=3 total=4" artifacts/android-gl-multisurface.log \
+    && grep -Fq "$READY_MARKER" artifacts/android-gl-multisurface.log \
+    && grep -Fq "ACTIVITY_RESUMED activity=MainActivity" artifacts/android-gl-multisurface.log \
+    && grep -Fq "UI_READY activity=MainActivity" artifacts/android-gl-multisurface.log \
+    && grep -Fq "WINDOW_FOCUS hasFocus=true" artifacts/android-gl-multisurface.log; then
+    MULTI_READY=1
+    break
+  fi
   sleep 1
 done
-if [[ "$MULTI_READY" != "1" ]]; then echo "Four-surface workload did not initialize." >&2; exit 1; fi
+if [[ "$MULTI_READY" != "1" ]]; then
+  echo "Four-surface workload did not reach a focused, laid-out Activity." >&2
+  cat artifacts/android-gl-multisurface.log >&2
+  exit 1
+fi
+
+adb shell dumpsys activity activities > artifacts/android-multisurface-activities.txt
+adb shell uiautomator dump /sdcard/liquid-glass-multisurface.xml >/dev/null
+adb pull /sdcard/liquid-glass-multisurface.xml artifacts/android-window-multisurface.xml
+python3 - <<'PY'
+import xml.etree.ElementTree as ET
+
+root = ET.parse("artifacts/android-window-multisurface.xml").getroot()
+nodes = list(root.iter("node"))
+package = "org.liquidglass.reference.debug"
+app_nodes = [node for node in nodes if node.attrib.get("package") == package]
+if not app_nodes:
+    raise SystemExit("The four-surface capture is not displaying the Liquid Glass app window.")
+descriptions = {node.attrib.get("content-desc", "") for node in app_nodes}
+required = {"Connect the liquid lens", "Pause optical preview", "Refraction strength"}
+missing = required - descriptions
+if missing:
+    raise SystemExit("The four-surface app view is incomplete; missing accessibility nodes: " + ", ".join(sorted(missing)))
+texts = {node.attrib.get("text", "") for node in app_nodes}
+if "Light, held in motion." not in texts:
+    raise SystemExit("The four-surface capture does not contain the Liquid Glass Activity title.")
+PY
+
 adb shell screencap -p /sdcard/liquid-glass-android-four-surfaces.png
 adb pull /sdcard/liquid-glass-android-four-surfaces.png artifacts/android-gles2-four-surfaces.png
+MULTI_CAPTURE_BYTES="$(wc -c < artifacts/android-gles2-four-surfaces.png)"
+if [[ "$MULTI_CAPTURE_BYTES" -lt 100000 ]]; then
+  echo "Four-surface screenshot is too small to contain the rendered app scene: $MULTI_CAPTURE_BYTES bytes." >&2
+  exit 1
+fi
 
 grep -Fq "$READY_MARKER" artifacts/android-gl.log
 test -s artifacts/android-gles2-l3.png

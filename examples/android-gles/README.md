@@ -22,7 +22,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity
 ```
 
-The emulator/CI workflow builds the APK, validates native accessibility node names and target dimensions through UIAutomator, captures the primary L3 state, changes logical size/density and rotates to landscape, then launches a four-surface SDF workload. A separate profile window preserves frame timing, memory, display, battery, thermal, and SurfaceFlinger diagnostics.
+The emulator/CI workflow builds the APK, validates native accessibility node names and target dimensions through UIAutomator, captures the primary L3 state, changes logical size/density and rotates to landscape, then launches a four-surface SDF workload. Before capture it verifies that the Liquid Glass Activity is resumed, focused, laid out, and present in UIAutomator's accessibility hierarchy; it rejects splash/launcher screenshots. A separate profile window preserves frame timing, memory, display, battery, thermal, and SurfaceFlinger diagnostics.
 
 ## Demonstrated behavior
 

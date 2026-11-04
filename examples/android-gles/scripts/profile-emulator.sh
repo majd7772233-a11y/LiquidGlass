@@ -6,7 +6,10 @@ mkdir -p artifacts
 
 adb shell dumpsys gfxinfo "$PACKAGE" reset >/dev/null 2>&1 || true
 adb logcat -c
-adb shell am force-stop "$PACKAGE"\nadb shell am start -n "$PACKAGE/org.liquidglass.reference.MainActivity" --ei extra_surfaces 3 >/dev/null
+adb shell am force-stop "$PACKAGE"
+adb shell input keyevent KEYCODE_WAKEUP || true
+adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
+adb shell am start -W -n "$PACKAGE/org.liquidglass.reference.MainActivity" --ei extra_surfaces 3 > artifacts/android-performance-launch.txt
 sleep 12
 
 adb logcat -d -s LiquidGlassDemo:I > artifacts/android-performance.log
@@ -33,7 +36,9 @@ from pathlib import Path
 log_path = Path("artifacts/android-performance.log")
 log = log_path.read_text(encoding="utf-8", errors="replace") if log_path.exists() else ""
 perf = re.findall(r"PERF [^\r\n]+", log)
-device = re.findall(r"GL_DEVICE [^\r\n]+", log)
+multisurface_path = Path("artifacts/android-gl-multisurface.log")
+multisurface_log = multisurface_path.read_text(encoding="utf-8", errors="replace") if multisurface_path.exists() else ""
+device = re.findall(r"GL_DEVICE [^\r\n]+", log + "\n" + multisurface_log)
 report = {
     "schemaVersion": 1,
     "environment": "Android API 35 x86_64 emulator with SwiftShader",
@@ -47,7 +52,9 @@ report = {
         "android-gfxinfo.txt", "android-gfxinfo-framestats.txt", "android-meminfo.txt",
         "android-battery.txt", "android-thermal.txt", "android-surface-list.txt",
         "android-display-size.txt", "android-display-density.txt", "android-animator-scale.txt",
-        "android-top.txt", "android-performance.log"
+        "android-top.txt", "android-performance.log", "android-performance-launch.txt",
+        "android-window-performance.xml", "android-multisurface-activities.txt",
+        "android-window-multisurface.xml", "android-accessibility-settings.log", "android-gl-multisurface.log"
     ]
 }
 Path("artifacts/android-performance-summary.json").write_text(
