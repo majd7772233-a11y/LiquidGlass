@@ -28,6 +28,7 @@ jobs:
           python -m py_compile .agents/skills/liquid-glass/tests/test_skill_package.py
           python -m py_compile studio/scripts/build_plugin_package.py
           python -m py_compile studio/tests/test_studio_package.py
+          python -m py_compile examples/tests/test_reference_demos.py
 
       - name: Run Skill package and platform adaptation tests
         run: python -m unittest discover -s .agents/skills/liquid-glass/tests -v
@@ -45,6 +46,9 @@ jobs:
           path: /tmp/liquid-glass-studio.zip
           if-no-files-found: error
           retention-days: 3
+
+      - name: Run runnable reference demo contract tests
+        run: python -m unittest discover -s examples/tests -v
 
       - name: Run read-only project inventory smoke test
         run: |

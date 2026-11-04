@@ -1,8 +1,8 @@
 # Platform Adaptation Workflow Catalog
 
-These are compact, reproducible decision and validation workflows. They are designed to make platform constraints explicit and to protect the Skill from choosing APIs by habit.
+These are compact, reproducible decision and validation workflows. They are designed to make platform constraints explicit and to protect the Skill from choosing APIs by habit. They are **not** runnable demo applications.
 
-They are **not** finished reference applications and do not claim visual parity. Phase 5 is responsible for runnable visual demos with captured output.
+Runnable visual implementations and CI capture routes now live in the root [examples catalog](../../../../examples/README.md): the WebGL2 app-owned-backdrop demo and Android Java/OpenGL ES 2.0 app. Keep these implementation demos separate from the decision/validation fixtures below.
 
 | Family / sample | Strategy being evaluated | Honest expected tier before target-specific testing |
 |---|---|---|
@@ -25,3 +25,9 @@ They are **not** finished reference applications and do not claim visual parity.
 5. Record the demonstrated tier, tested environment, and any unsupported branches.
 
 The Skill package tests assert that each workflow exists and contains validation/tier guidance. They are documentation/decision regression tests; they do not compile Swift, QML, Unity, Unreal, or a Flutter app. Target application builds and visual captures remain explicit work in Phase 5.
+
+
+## Runnable implementation demos
+
+- [WebGL2 L2/L3 reference implementation](../../../../examples/webgl2/README.md) — app-owned scene texture, true sample displacement, semantic HTML controls, desktop/mobile browser capture.
+- [Android Java/GLES2 L2/L3 reference app](../../../../examples/android-gles/README.md) — app-owned framebuffer, native Android controls, emulator build and capture.

@@ -8,5 +8,6 @@ These documents define the platform-neutral visual/interaction contract and the 
 - [Skill installation](skill-installation.md) — install, update, and validate the portable Codex Skill.
 - [Platform adaptation](platform-adaptation/README.md) — capability matrix, platform-family routes, and validation guidance.
 - [Liquid Glass Studio](../studio/README.md) — ChatGPT execution twin, package builder, and shared-knowledge synchronization.
+- [Runnable reference implementations](../examples/README.md) — WebGL2 and Android Java/GLES2 demos, build steps, fidelity tiers, and capture workflow.
 
 Read the visual specifications before implementing platform-specific rendering. They describe the desired result, not a mandated rendering stack. The Skill is the operational workflow for discovering a target project and applying those specifications.

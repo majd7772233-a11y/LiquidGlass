@@ -32,3 +32,19 @@ Inspect and reclassify these files before relying on them as evidence for a spec
 - Use the image most relevant to the feature under review; do not expect every example to show every property.
 - Preserve source assets unless provenance, relevance, and licensing have been checked.
 - Do not describe an effect as true refraction when the implementation only blurs or tints the background.
+
+
+## Runnable reference implementations
+
+These standalone examples are implementation evidence, distinct from the visual reference images above. Both own the background pixels they refract; neither assumes that a shader can read arbitrary DOM or native View content.
+
+| Platform | Demo | Implemented tier | Main proof |
+|---|---|---|---|
+| Browser / WebGL2 | [WebGL2 reference lab](webgl2/README.md) | L2 + L3, with CSS L1/L0 fallback | An app-owned RGBA8 framebuffer is sampled/displaced by an SDF-shaped lens; a connected lobe morphs interactively. |
+| Android Views / Java / OpenGL ES 2.0 | [Android GLES2 reference app](android-gles/README.md) | L2 + L3, with L0 framebuffer fallback | An app-owned GLES2 FBO feeds a refractive shader; native Android buttons and a SeekBar control the liquid shape and strength. |
+
+### Reproducible build and capture
+
+The [reference-demo workflow](../.github/workflows/reference-demos.yml) runs a headless Chromium/WebGL2 test and captures desktop/mobile screenshots. It also builds the Android debug APK, launches it on an API 35 emulator, verifies the app-owned FBO path through the renderer diagnostic, activates the connected-lens control through Android's accessibility tree, and uploads an emulator capture.
+
+Artifacts are retained for 14 days per GitHub Actions run. These are reproducible CI/emulator captures, not proof of performance on every physical GPU. Real-device profiling, TalkBack review, and thermal/battery measurements remain in Phase 6.
