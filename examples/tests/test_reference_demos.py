@@ -83,6 +83,7 @@ class ReferenceDemoTests(unittest.TestCase):
         self.assertIn("GL_READY tier=L3", verify_script)
         self.assertIn("adb shell screencap", verify_script)
         self.assertIn("uiautomator dump", verify_script)
+        self.assertIn('re.fullmatch(r"\\[(\\d+),(\\d+)\\]\\[(\\d+),(\\d+)\\]"', verify_script)
         self.assertIn("upload-artifact@v4", workflow)
 
 

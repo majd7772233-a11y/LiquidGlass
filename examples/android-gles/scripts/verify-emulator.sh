@@ -39,7 +39,7 @@ target = next((node for node in nodes if node.attrib.get("text") == "Connect len
 if target is None:
     raise SystemExit("The native Connect lens control was not present in the accessibility tree.")
 
-match = re.fullmatch(r"\\[(\\d+),(\\d+)\\]\\[(\\d+),(\\d+)\\]", target.attrib["bounds"])
+match = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", target.attrib["bounds"])
 if not match:
     raise SystemExit("Could not parse Android accessibility bounds for Connect lens.")
 
