@@ -290,11 +290,25 @@ html.no-webgl #scene { display: none; }
   .panel-kicker, .eyebrow { color: #fff; }
 }
 
-@media (prefers-reduced-transparency: reduce), html[data-transparency="reduced"] {
+@media (prefers-reduced-transparency: reduce) {
   .glass-panel { background: #080d1d; border: 2px solid #f4f7ff; box-shadow: none; }
   .track-index, .play-control, .icon-control, .morph-control { background: #14243a; border: 1px solid #f4f7ff; }
   .ambient-noise { display: none; }
 }
+
+html[data-transparency="reduced"] .glass-panel {
+  background: #080d1d;
+  border: 2px solid #f4f7ff;
+  box-shadow: none;
+}
+html[data-transparency="reduced"] .track-index,
+html[data-transparency="reduced"] .play-control,
+html[data-transparency="reduced"] .icon-control,
+html[data-transparency="reduced"] .morph-control {
+  background: #14243a;
+  border: 1px solid #f4f7ff;
+}
+html[data-transparency="reduced"] .ambient-noise { display: none; }
 
 @media (forced-colors: active) {
   .glass-panel, .track-index, .play-control, .icon-control, .morph-control {
