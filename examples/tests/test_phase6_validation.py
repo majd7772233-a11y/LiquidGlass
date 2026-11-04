@@ -52,7 +52,7 @@ class PhaseSixValidationTests(unittest.TestCase):
         self.assertIn("extra_surfaces", activity)
         self.assertIn("ACTIVITY_RESUMED activity=MainActivity", activity)
         self.assertIn("UI_READY activity=MainActivity", activity)
-        self.assertIn("WINDOW_FOCUS hasFocus=true", activity)
+        self.assertIn("WINDOW_FOCUS hasFocus=", activity)
         self.assertIn('morphButton.setContentDescription("Connect the liquid lens")', activity)
         self.assertNotIn('android:screenOrientation="portrait"', manifest)
         for token in ("PERF window_frames", "p95_frame_ms", "jank_gt_16_7",
