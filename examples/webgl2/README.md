@@ -39,8 +39,13 @@ npx playwright install chromium
 npm test
 ```
 
-The browser smoke test requires WebGL2 (SwiftShader is used in headless CI). It verifies renderer initialization, the morph state, playback state, range input, and creates desktop/mobile screenshots under `artifacts/`.
+The browser validation suite requires WebGL2 (SwiftShader is used in headless CI). It verifies renderer initialization, semantic names/states, 44 px action hit regions, keyboard order/focus, reduced motion, increased contrast, reduced transparency, and forced colors. It captures dark, bright, and fine-detail backdrops across desktop, tablet, mobile/high-DPR, and landscape viewports. `webgl2-validation-matrix.json` records frame intervals, CPU command-submission timing, draw calls, pixel ratio, and an RGBA8 texture-memory estimate.
 
 ## Known visual limits
 
 This is a compact analytical reference, not a full physical-optics simulator. It uses a procedural scene rather than the original reference video, estimates normals from an SDF, and approximates reflection/dispersion. It demonstrates actual backdrop displacement (L2) and a connected animated shape (L3), but makes no pixel-parity or physical-accuracy claim. Test on target GPUs and browsers before shipping it in a production app.
+
+
+## Validation and performance notes
+
+The renderer pauses its animation loop while the document is hidden. Its diagnostics report frame-interval percentiles and CPU-side WebGL command-submission time; the CPU timer is not GPU execution time. The reported texture memory is only the app-owned RGBA8 scene texture and excludes browser/driver allocations. See the [Phase 6 validation guide](../validation/README.md) for review steps and physical-device profiling requirements.

@@ -52,3 +52,8 @@ The [reference-demo workflow](../.github/workflows/reference-demos.yml) runs a h
 The WebGL2 artifact contains desktop/mobile Chromium screenshots. The Android artifact contains the debug APK, `GL_CONTEXT_READY` / `SCENE_FBO_READY` / `GL_READY tier=L3` log, Android accessibility hierarchy, and an L3 screenshot captured after the connected-lens button was activated. Artifacts are retained for 14 days per run.
 
 These are reproducible headless-browser/emulator captures, not proof of performance on every physical GPU. The scenes are procedural and optical highlights are approximations; neither sample claims pixel parity or physically complete optics. Real-device profiling, TalkBack review, and thermal/battery measurements remain in Phase 6.
+
+
+## Phase 6 — repeatable validation
+
+The [visual, accessibility, and performance validation protocol](validation/README.md) defines the review matrix, evidence labels, device profiling procedure, and release limitations. Use the [visual review record template](validation/visual-review-template.md) for every substantial material implementation. The browser CI captures dark, bright, and high-frequency scenes across desktop/tablet/mobile/landscape viewports. Android CI covers the emulator's alternate density/orientation layouts and a four-surface shader stress case. All emulator and headless-browser results remain distinct from physical-device certification.

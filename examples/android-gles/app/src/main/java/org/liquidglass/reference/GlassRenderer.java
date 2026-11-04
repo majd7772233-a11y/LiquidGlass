@@ -7,6 +7,8 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
+import java.util.Locale;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -57,6 +59,7 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
             "uniform float uMorph;\n" +
             "uniform float uStrength;\n" +
             "uniform float uHasScene;\n" +
+            "uniform float uExtraCount;\n" +
             "uniform vec2 uPointer;\n" +
             "float roundBox(vec2 p,vec2 b,float r){ vec2 q=abs(p)-b+vec2(r); return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r; }\n" +
             "float unite(float a,float b,float k){ float h=clamp(0.5+0.5*(b-a)/max(k,0.001),0.0,1.0); return mix(b,a,h)-k*h*(1.0-h); }\n" +
@@ -68,13 +71,22 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
             " float bubble=length(p-vec2(hw*0.91,-hh*0.48))-radius;\n" +
             " return unite(body,bubble,max(1.0,radius*0.72));\n" +
             "}\n" +
+            "float allSurfaces(vec2 p){\n" +
+            " float d=lens(p); float radius=min(uResolution.x,uResolution.y)*0.045;\n" +
+            " vec2 mainCenter=vec2(uLensRect.x+uLensRect.z*0.5,uResolution.y-(uLensRect.y+uLensRect.w*0.5));\n" +
+            " vec2 screenPoint=p+mainCenter;\n" +
+            " if(uExtraCount>0.5) d=min(d,length(screenPoint-vec2(uResolution.x*0.15,uResolution.y*0.78))-radius);\n" +
+            " if(uExtraCount>1.5) d=min(d,length(screenPoint-vec2(uResolution.x*0.85,uResolution.y*0.78))-radius);\n" +
+            " if(uExtraCount>2.5) d=min(d,length(screenPoint-vec2(uResolution.x*0.15,uResolution.y*0.20))-radius);\n" +
+            " return d;\n" +
+            "}\n" +
             "void main(){\n" +
             " vec2 uv=vUv; vec3 original=vec3(0.035,0.065,0.12);\n" +
             " if(uHasScene>0.5) original=texture2D(uScene,uv).rgb;\n" +
             " vec2 center=vec2(uLensRect.x+uLensRect.z*0.5,uResolution.y-(uLensRect.y+uLensRect.w*0.5));\n" +
-            " vec2 p=gl_FragCoord.xy-center; float d=lens(p);\n" +
+            " vec2 p=gl_FragCoord.xy-center; float d=allSurfaces(p);\n" +
             " float mask=1.0-smoothstep(-1.6,1.6,d); float e=1.7;\n" +
-            " vec2 grad=vec2(lens(p+vec2(e,0.0))-lens(p-vec2(e,0.0)),lens(p+vec2(0.0,e))-lens(p-vec2(0.0,e)));\n" +
+            " vec2 grad=vec2(allSurfaces(p+vec2(e,0.0))-allSurfaces(p-vec2(e,0.0)),allSurfaces(p+vec2(0.0,e))-allSurfaces(p-vec2(0.0,e)));\n" +
             " vec2 n=length(grad)>0.001?normalize(grad):vec2(0.0,1.0);\n" +
             " float edge=exp(-abs(d)*0.075); float body=1.0-smoothstep(0.0,95.0,-d);\n" +
             " vec2 pointerForce=(uPointer-0.5)*2.0;\n" +
@@ -101,6 +113,8 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
     private final FloatBuffer quad;
     private volatile float[] lensRect = new float[]{40f, 400f, 720f, 330f};
     private volatile float morphTarget = 0f;
+    private volatile boolean reducedMotion;
+    private volatile int extraSurfaceCount;
     private volatile float strength = 1.13f;
     private volatile float pointerX = 0.5f;
     private volatile float pointerY = 0.5f;
@@ -115,9 +129,14 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
     private boolean framebufferReady;
     private volatile String statusText = "GL CONTEXT · INITIALIZING";
     private boolean loggedReady;
-    private float morph;
+    private volatile float morph;
     private long startNanos;
     private long lastNanos;
+    private long lastPerformanceLogNanos;
+    private final double[] frameIntervalsMs = new double[120];
+    private final double[] cpuSubmitMs = new double[120];
+    private int performanceSampleCount;
+    private int performanceSampleIndex;
 
     GlassRenderer() {
         ByteBuffer bytes = ByteBuffer.allocateDirect(16 * 4);
@@ -150,6 +169,18 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
         playing = value;
     }
 
+    void setReducedMotion(boolean value) {
+        reducedMotion = value;
+    }
+
+    void setExtraSurfaceCount(int value) {
+        extraSurfaceCount = Math.max(0, Math.min(3, value));
+    }
+
+    boolean isMorphing() {
+        return Math.abs(morphTarget - morph) > 0.01f;
+    }
+
     void release() {
         // GL resources are released with the EGL context; GLSurfaceView owns its lifecycle.
     }
@@ -166,6 +197,11 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
             lastNanos = startNanos;
             statusText = "GLSL ES 1.00 · SHADERS READY";
             Log.i(TAG, "GL_CONTEXT_READY version=OpenGL_ES_2.0");
+            String extensions = GLES20.glGetString(GLES20.GL_EXTENSIONS);
+            Log.i(TAG, "GL_DEVICE vendor=" + GLES20.glGetString(GLES20.GL_VENDOR)
+                    + " renderer=" + GLES20.glGetString(GLES20.GL_RENDERER)
+                    + " version=" + GLES20.glGetString(GLES20.GL_VERSION)
+                    + " disjoint_timer_extension=" + (extensions != null && extensions.contains("GL_EXT_disjoint_timer_query")));
         } catch (RuntimeException error) {
             backgroundProgram = 0;
             glassProgram = 0;
@@ -216,17 +252,20 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {
+        long submitStartNanos = System.nanoTime();
         if (backgroundProgram == 0 || glassProgram == 0) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
             return;
         }
 
         long now = System.nanoTime();
-        float delta = Math.min(0.05f, Math.max(0f, (now - lastNanos) / 1_000_000_000f));
+        long intervalNanos = Math.max(0L, now - lastNanos);
+        float delta = Math.min(0.05f, Math.max(0f, intervalNanos / 1_000_000_000f));
         lastNanos = now;
         float target = morphTarget;
-        morph += (target - morph) * (1f - (float) Math.exp(-delta * 7.5f));
-        float time = playing ? (now - startNanos) / 1_000_000_000f : 0f;
+        if (reducedMotion) morph = target;
+        else morph += (target - morph) * (1f - (float) Math.exp(-delta * 7.5f));
+        float time = playing && !reducedMotion ? (now - startNanos) / 1_000_000_000f : 0f;
 
         if (framebufferReady) {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, framebuffer);
@@ -254,6 +293,38 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
                     ? "GL_READY tier=L3 renderer=GLES2_APP_OWNED_FBO"
                     : "GL_READY tier=L0 renderer=GLES2_TINT_FALLBACK");
         }
+        recordPerformance(now, intervalNanos, System.nanoTime() - submitStartNanos);
+    }
+
+    private void recordPerformance(long now, long intervalNanos, long submitNanos) {
+        if (intervalNanos > 0L) frameIntervalsMs[performanceSampleIndex] = intervalNanos / 1_000_000.0;
+        cpuSubmitMs[performanceSampleIndex] = submitNanos / 1_000_000.0;
+        performanceSampleIndex = (performanceSampleIndex + 1) % frameIntervalsMs.length;
+        performanceSampleCount = Math.min(performanceSampleCount + 1, frameIntervalsMs.length);
+        if (lastPerformanceLogNanos == 0L) lastPerformanceLogNanos = now;
+        if (now - lastPerformanceLogNanos < 5_000_000_000L || performanceSampleCount < 2) return;
+
+        double[] intervals = Arrays.copyOf(frameIntervalsMs, performanceSampleCount);
+        double[] submit = Arrays.copyOf(cpuSubmitMs, performanceSampleCount);
+        Arrays.sort(intervals);
+        Arrays.sort(submit);
+        double intervalSum = 0.0;
+        int slowFrames = 0;
+        int verySlowFrames = 0;
+        for (double value : intervals) {
+            intervalSum += value;
+            if (value > 16.7) slowFrames++;
+            if (value > 33.3) verySlowFrames++;
+        }
+        double averageFrameMs = intervalSum / intervals.length;
+        double fps = averageFrameMs > 0.0 ? 1000.0 / averageFrameMs : 0.0;
+        double p95FrameMs = intervals[Math.min(intervals.length - 1, (int) Math.ceil(intervals.length * 0.95) - 1)];
+        double p95SubmitMs = submit[Math.min(submit.length - 1, (int) Math.ceil(submit.length * 0.95) - 1)];
+        long estimatedFboBytes = (long) surfaceWidth * surfaceHeight * 4L;
+        Log.i(TAG, String.format(Locale.US,
+                "PERF window_frames=%d avg_frame_ms=%.2f p95_frame_ms=%.2f fps=%.1f jank_gt_16_7=%d jank_gt_33_3=%d cpu_submit_p95_ms=%.2f fbo_texture_bytes=%d full_screen_passes=2 surfaces=%d gpu_time_ms=unavailable",
+                performanceSampleCount, averageFrameMs, p95FrameMs, fps, slowFrames, verySlowFrames, p95SubmitMs, estimatedFboBytes, extraSurfaceCount + 1));
+        lastPerformanceLogNanos = now;
     }
 
     private void drawBackground(float time) {
@@ -273,6 +344,7 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
         uniform1f(glassProgram, "uMorph", morph);
         uniform1f(glassProgram, "uStrength", strength);
         uniform1f(glassProgram, "uHasScene", framebufferReady ? 1f : 0f);
+        uniform1f(glassProgram, "uExtraCount", extraSurfaceCount);
         uniform2f(glassProgram, "uPointer", pointerX, pointerY);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, sceneTexture);

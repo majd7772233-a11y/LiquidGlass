@@ -22,13 +22,16 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity
 ```
 
-The emulator/CI workflow builds the APK, launches it, waits for the GL renderer diagnostic, captures a screenshot, and uploads both as workflow artifacts.
+The emulator/CI workflow builds the APK, validates native accessibility node names and target dimensions through UIAutomator, captures the primary L3 state, changes logical size/density and rotates to landscape, then launches a four-surface SDF workload. A separate profile window preserves frame timing, memory, display, battery, thermal, and SurfaceFlinger diagnostics.
 
 ## Demonstrated behavior
 
 - **L2 — refractive glass:** a procedural high-contrast scene is rendered into an application-owned RGBA framebuffer texture. A fragment shader samples offset texels based on the rounded surface's signed-distance gradient.
 - **L3 — dynamic liquid glass:** the “Connect lens” button expands a secondary lobe using a smooth-union distance function. The same shape field drives the refraction mask and edge lighting.
-- **Native semantics:** the title, buttons, and strength SeekBar are ordinary Android Views with accessible descriptions and system focus/touch behavior.
+- **Native semantics:** the title, buttons, and strength SeekBar are ordinary Android Views with accessible descriptions and system focus/touch behavior. Action buttons are 48 dp high and the SeekBar layout is 48 dp high.
+- **Accessibility settings:** high-text-contrast is read through AccessibilityManager. Reduced animation follows the system animator scale / ValueAnimator setting. The Activity follows the device orientation rather than forcing portrait.
+- **Demand-driven rendering:** GLSurfaceView uses RENDERMODE_WHEN_DIRTY; an activity-owned 16 ms frame pump is active only during playback or a settling morph and is removed while paused.
+- **Multiple surfaces:** the optional `extra_surfaces` launch extra adds up to three independent refractive circular SDF regions to the main lens. They share the app-owned scene texture and one glass draw pass; they are a shader stress mode, not three additional Android View controls.
 - **Fallback:** if the scene framebuffer is incomplete, the renderer reports L0 and draws a tinted/highlighted lens without claiming refraction. GLES2 itself is a declared required device feature.
 
 ## Renderer boundaries
@@ -40,8 +43,12 @@ The sample is an analytical reference, not a physical-optics simulation. It uses
 ## Validation checklist
 
 - Build the debug APK with the documented JDK/Gradle/SDK combination.
-- On emulator, confirm the log contains `GL_READY tier=L3 renderer=GLES2_APP_OWNED_FBO`.
-- Inspect the captured screenshot for visible grid displacement under the glass and a connected lobe when enabled.
-- Toggle the morph control; adjust the refractive strength; verify buttons/SeekBar remain native and responsive.
-- Test API 23+ device/runtime branches, portrait rotation, TalkBack, touch targets, contrast, and release of GL resources on pause/destroy on real hardware.
+- On the API 35 emulator, confirm `GL_READY tier=L3 renderer=GLES2_APP_OWNED_FBO` and the GL vendor/renderer diagnostic.
+- Verify TalkBack-facing content descriptions and 48 dp action hit regions using the uploaded accessibility report.
+- Inspect default, 720 × 1280 / 320 dpi, and 1280 × 720 landscape captures; verify the UI remains usable after resizing and orientation changes.
+- Run the `extra_surfaces=3` benchmark and confirm `SURFACE_COUNT main=1 additional=3 total=4` before profiling.
+- Review frame callback intervals, CPU command submission, FBO texture estimate, meminfo, gfxinfo, battery/thermal snapshots, and surface list. GPU execution time is not inferred from CPU timing.
+- Test TalkBack speech, API 23+ hardware, real GPU/driver behavior, overdraw, battery delta, and sustained thermal behavior on physical devices before a production claim.
 - If FBO setup fails, verify the truthful L0 fallback log and appearance rather than claiming L2.
+
+See the [Phase 6 validation and physical-device profiling guide](../validation/README.md).

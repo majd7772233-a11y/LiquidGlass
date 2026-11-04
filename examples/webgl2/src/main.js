@@ -32,6 +32,12 @@ if (!gl) {
 }
 
 function startRenderer(context) {
+  const sceneNames = { midnight: 0, bright: 1, detailed: 2 };
+  const sceneName = new URLSearchParams(location.search).get("scene") || "midnight";
+  const backgroundMode = sceneNames[sceneName] ?? 0;
+  document.documentElement.dataset.scene = sceneNames[sceneName] === undefined ? "midnight" : sceneName;
+  const frameSamples = [];
+  const cpuSubmitSamples = [];
   const vertexSource = `#version 300 es
   in vec2 aPosition;
   in vec2 aTexCoord;
@@ -47,6 +53,7 @@ function startRenderer(context) {
   out vec4 outColor;
   uniform vec2 uResolution;
   uniform float uTime;
+  uniform float uBackgroundMode;
 
   float softRing(float d, float width) {
     return 1.0 - smoothstep(width, width + 0.006, abs(d));
@@ -61,13 +68,28 @@ function startRenderer(context) {
     vec3 deep = vec3(0.015, 0.035, 0.085);
     vec3 blue = vec3(0.08, 0.18, 0.34);
     vec3 violet = vec3(0.24, 0.13, 0.34);
+    if (uBackgroundMode > 0.5 && uBackgroundMode < 1.5) {
+      deep = vec3(0.58, 0.67, 0.68);
+      blue = vec3(0.94, 0.91, 0.78);
+      violet = vec3(0.58, 0.69, 0.63);
+    } else if (uBackgroundMode > 1.5) {
+      deep = vec3(0.025, 0.10, 0.065);
+      blue = vec3(0.12, 0.31, 0.19);
+      violet = vec3(0.35, 0.27, 0.11);
+    }
     vec3 color = mix(deep, blue, smoothstep(-0.55, 0.58, p.y));
     color = mix(color, violet, (1.0 - smoothstep(-0.55, 0.72, p.x + 0.35 * p.y)) * 0.43);
 
-    vec2 gridUv = uv * vec2(19.0, 13.0);
+    vec2 gridUv = uv * (uBackgroundMode > 1.5 ? vec2(59.0, 43.0) : vec2(19.0, 13.0));
     vec2 gridCell = abs(fract(gridUv) - 0.5);
     float gridLine = 1.0 - smoothstep(0.478, 0.493, max(gridCell.x, gridCell.y));
-    color += gridLine * vec3(0.055, 0.105, 0.17);
+    vec3 gridColor = uBackgroundMode > 0.5 ? vec3(0.035, 0.09, 0.10) : vec3(0.055, 0.105, 0.17);
+    color += gridLine * gridColor;
+    if (uBackgroundMode > 1.5) {
+      float fineLines = 1.0 - smoothstep(0.965, 0.99, abs(sin(uv.x * 171.0 + sin(uv.y * 31.0))));
+      float leafVeins = 1.0 - smoothstep(0.972, 0.996, abs(sin((uv.x + uv.y * 0.37) * 93.0)));
+      color += fineLines * vec3(0.09, 0.15, 0.07) + leafVeins * vec3(0.025, 0.08, 0.035);
+    }
 
     float scan = softRing(p.y - 0.12 * sin(p.x * 3.2 + t * 0.24), 0.0025);
     color += scan * vec3(0.13, 0.27, 0.38) * 0.8;
@@ -193,6 +215,9 @@ function startRenderer(context) {
   let lastFrame = startedAt;
   let progressOrigin = startedAt;
   let frameId = 0;
+  let running = false;
+  let lastMetricFrame = 0;
+  const gpuTimerExtensionAvailable = Boolean(context.getExtension("EXT_disjoint_timer_query_webgl2"));
 
   try {
     backgroundProgram = createProgram(context, vertexSource, backgroundSource);
@@ -211,6 +236,24 @@ function startRenderer(context) {
     document.documentElement.dataset.renderer = "webgl2-l2-l3";
     status.textContent = "WEBGL2 · OWNED SCENE TEXTURE · L2 / L3";
     status.title = "The lens samples and displaces the application-owned background texture.";
+    window.__liquidGlassDiagnostics = () => {
+      const average = values => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+      const percentile = (values, ratio) => {
+        if (!values.length) return 0;
+        const sorted = [...values].sort((a, b) => a - b);
+        return sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * ratio) - 1)];
+      };
+      return {
+        renderer: "webgl2-l2-l3", scene: document.documentElement.dataset.scene,
+        width, height, pixelRatio, estimatedSceneTextureBytes: width * height * 4,
+        frameSamples: frameSamples.length, averageFrameMs: average(frameSamples),
+        p95FrameMs: percentile(frameSamples, 0.95), maxFrameMs: frameSamples.length ? Math.max(...frameSamples) : 0,
+        framesOver16_7ms: frameSamples.filter(value => value > 16.7).length,
+        averageCpuSubmitMs: average(cpuSubmitSamples), p95CpuSubmitMs: percentile(cpuSubmitSamples, 0.95),
+        drawCallsPerFrame: 2, gpuTimerExtensionAvailable, gpuTimeMs: null,
+        reducedMotion: reducedMotion.matches, morph, morphTarget, playing, pageHidden: document.hidden
+      };
+    };
   } catch (error) {
     console.error(error);
     document.documentElement.classList.add("no-webgl");
@@ -280,8 +323,13 @@ function startRenderer(context) {
   }
 
   function render(now) {
+    const cpuStart = performance.now();
     const delta = Math.min(0.05, Math.max(0, (now - lastFrame) / 1000));
     lastFrame = now;
+    if (frameSamples.length >= 180) frameSamples.shift();
+    if (cpuSubmitSamples.length >= 180) cpuSubmitSamples.shift();
+    if (lastMetricFrame > 0) frameSamples.push(Math.max(0, now - lastMetricFrame));
+    lastMetricFrame = now;
     if (reducedMotion.matches) {
       morph = morphTarget;
     } else {
@@ -299,6 +347,7 @@ function startRenderer(context) {
     bindQuad(backgroundProgram);
     context.uniform2f(context.getUniformLocation(backgroundProgram, "uResolution"), width, height);
     context.uniform1f(context.getUniformLocation(backgroundProgram, "uTime"), time);
+    context.uniform1f(context.getUniformLocation(backgroundProgram, "uBackgroundMode"), backgroundMode);
     context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
 
     context.bindFramebuffer(context.FRAMEBUFFER, null);
@@ -318,8 +367,33 @@ function startRenderer(context) {
     context.uniform2f(context.getUniformLocation(glassProgram, "uPointer"), pointer[0], pointer[1]);
     context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
 
+    cpuSubmitSamples.push(performance.now() - cpuStart);
+    if (running && !document.hidden && !reducedMotion.matches) frameId = requestAnimationFrame(render);
+    else running = false;
+  }
+
+  function resumeFrames() {
+    if (running || document.hidden || !document.documentElement.dataset.renderer.startsWith("webgl2")) return;
+    running = true;
+    lastFrame = performance.now();
+    lastMetricFrame = 0;
     frameId = requestAnimationFrame(render);
   }
+
+  function pauseFrames() {
+    running = false;
+    cancelAnimationFrame(frameId);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pauseFrames();
+    else resumeFrames();
+  });
+  reducedMotion.addEventListener?.("change", () => {
+    lastFrame = performance.now();
+    if (reducedMotion.matches) pauseFrames();
+    else resumeFrames();
+  });
 
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(document.documentElement);
@@ -327,7 +401,7 @@ function startRenderer(context) {
   window.addEventListener("resize", resize);
   canvas.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
-    cancelAnimationFrame(frameId);
+    pauseFrames();
     document.documentElement.classList.add("no-webgl");
     const blurAvailable = window.CSS && CSS.supports("backdrop-filter", "blur(1px)");
     document.documentElement.dataset.renderer = blurAvailable ? "css-l1" : "css-l0";
@@ -342,6 +416,7 @@ function startRenderer(context) {
     morphTarget = morphTarget > 0.5 ? 0 : 1;
     morphButton.setAttribute("aria-pressed", String(morphTarget > 0.5));
     morphLabel.textContent = morphTarget > 0.5 ? "Separate the lens" : "Connect the lens";
+    resumeFrames();
   });
   playButton.addEventListener("click", () => {
     playing = !playing;
@@ -372,5 +447,5 @@ function startRenderer(context) {
 
   morphButton.addEventListener("pointerdown", () => { strength = 1.08; });
   morphButton.addEventListener("pointerup", () => { strength = 1; });
-  requestAnimationFrame(render);
+  resumeFrames();
 }

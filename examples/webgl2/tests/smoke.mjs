@@ -56,6 +56,7 @@ try {
   assert.equal(await morph.getAttribute("aria-pressed"), "true");
   await desktop.waitForTimeout(450);
   await desktop.screenshot({ path: join(artifactDir, "webgl2-desktop-connected.png"), fullPage: true });
+  await desktop.screenshot({ path: join(artifactDir, "webgl2-desktop.png"), fullPage: true });
 
   const play = desktop.locator("#play-toggle");
   await play.click();
@@ -101,9 +102,43 @@ try {
     assert.ok(diagnostics.estimatedSceneTextureBytes > 0);
     assert.equal(diagnostics.drawCallsPerFrame, 2);
     await page.screenshot({ path: join(artifactDir, scenario.name + ".png"), fullPage: true });
+    if (scenario.name === "mobile-detailed") {
+      await page.screenshot({ path: join(artifactDir, "webgl2-mobile.png"), fullPage: true });
+    }
     captures.push({ ...scenario, diagnostics });
     await page.close();
   }
+
+  const fallbackL1 = await browser.newPage({ viewport: { width: 960, height: 720 } });
+  await fallbackL1.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+      if (type === "webgl2") return null;
+      return original.call(this, type, ...args);
+    };
+  });
+  await fallbackL1.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
+  assert.equal(await fallbackL1.locator("html").getAttribute("data-renderer"), "css-l1");
+  assert.match(await fallbackL1.locator("#renderer-status").textContent(), /L1 BLUR/);
+  await fallbackL1.screenshot({ path: join(artifactDir, "webgl2-fallback-l1.png"), fullPage: true });
+
+  const fallbackL0 = await browser.newPage({ viewport: { width: 960, height: 720 } });
+  await fallbackL0.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+      if (type === "webgl2") return null;
+      return original.call(this, type, ...args);
+    };
+    const supports = CSS.supports.bind(CSS);
+    Object.defineProperty(CSS, "supports", {
+      configurable: true,
+      value: (property, value) => property === "backdrop-filter" ? false : supports(property, value)
+    });
+  });
+  await fallbackL0.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
+  assert.equal(await fallbackL0.locator("html").getAttribute("data-renderer"), "css-l0");
+  assert.match(await fallbackL0.locator("#renderer-status").textContent(), /L0/);
+  await fallbackL0.screenshot({ path: join(artifactDir, "webgl2-fallback-l0.png"), fullPage: true });
 
   const accessibility = await browser.newPage({ viewport: { width: 1024, height: 768 } });
   await accessibility.emulateMedia({ reducedMotion: "reduce", contrast: "more" });
@@ -139,6 +174,8 @@ try {
   assert.equal(await accessibility.evaluate(() => matchMedia("(forced-colors: active)").matches), true);
   assert.equal(await accessibility.getByRole("button", { name: "Separate the lens" }).count(), 1);
   await accessibility.screenshot({ path: join(artifactDir, "webgl2-accessibility-fallback.png"), fullPage: true });
+  await fallbackL1.close();
+  await fallbackL0.close();
 
   await desktop.waitForTimeout(1200);
   const desktopMetrics = await desktop.evaluate(() => window.__liquidGlassDiagnostics());
@@ -161,6 +198,7 @@ try {
       reducedTransparency: reducedTransparency,
       forcedColors: true
     },
+    fallbackCoverage: ["CSS L1 backdrop-blur fallback", "L0 translucent fallback"],
     limitations: [
       "SwiftShader/headless browser results are not physical-GPU performance evidence.",
       "Scene texture bytes estimate one RGBA8 off-screen texture and exclude driver allocations and browser compositor memory.",

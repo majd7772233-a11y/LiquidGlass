@@ -82,8 +82,10 @@ jobs:
         working-directory: examples/android-gles
         run: gradle --no-daemon :app:assembleDebug
 
-      - name: Validate emulator verification script
-        run: bash -n examples/android-gles/scripts/verify-emulator.sh
+      - name: Validate emulator and profiler scripts
+        run: |
+          bash -n examples/android-gles/scripts/verify-emulator.sh
+          bash -n examples/android-gles/scripts/profile-emulator.sh
 
       - name: Enable KVM group permissions
         run: |
@@ -101,7 +103,7 @@ jobs:
           emulator-boot-timeout: 600
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: bash examples/android-gles/scripts/verify-emulator.sh
+          script: bash examples/android-gles/scripts/verify-emulator.sh && bash examples/android-gles/scripts/profile-emulator.sh
 
       - name: Upload Android APK and emulator evidence
         if: always()

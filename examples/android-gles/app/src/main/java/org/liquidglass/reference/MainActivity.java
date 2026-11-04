@@ -1,6 +1,10 @@
 package org.liquidglass.reference;
 
 import android.app.Activity;
+import android.animation.ValueAnimator;
+import android.view.accessibility.AccessibilityManager;
+import android.os.Build;
+import android.provider.Settings;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -11,7 +15,6 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -27,6 +30,17 @@ public final class MainActivity extends Activity {
     private Button morphButton;
     private boolean playing = true;
     private boolean connected = false;
+    private boolean reducedMotionEnabled;
+    private boolean highContrastEnabled;
+    private boolean activityResumed;
+    private final Handler frameHandler = new Handler(Looper.getMainLooper());
+    private final Runnable framePump = new Runnable() {
+        @Override public void run() {
+            if (!activityResumed || glView == null) return;
+            glView.requestRender();
+            if ((playing && !reducedMotionEnabled) || (renderer != null && renderer.isMorphing())) frameHandler.postDelayed(this, 16);
+        }
+    };
     private final Handler statusHandler = new Handler(Looper.getMainLooper());
     private final Runnable statusPoll = new Runnable() {
         @Override public void run() {
@@ -43,19 +57,27 @@ public final class MainActivity extends Activity {
         Window window = getWindow();
         window.setStatusBarColor(Color.rgb(8, 13, 29));
         window.setNavigationBarColor(Color.rgb(8, 13, 29));
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        AccessibilityManager accessibility = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+        highContrastEnabled = accessibility != null && accessibility.isHighTextContrastEnabled();
+        reducedMotionEnabled = isReducedMotionEnabled();
+        android.util.Log.i("LiquidGlassDemo", "GL_ACCESSIBILITY reduced_motion=" + reducedMotionEnabled
+                + " high_text_contrast=" + highContrastEnabled);
 
         FrameLayout root = new FrameLayout(this);
-        root.setBackgroundColor(Color.rgb(8, 13, 29));
+        root.setBackgroundColor(highContrastEnabled ? Color.BLACK : Color.rgb(8, 13, 29));
 
         renderer = new GlassRenderer();
         renderer.setPlaying(playing);
+        renderer.setReducedMotion(reducedMotionEnabled);
+        int extraSurfaces = Math.max(0, Math.min(3, getIntent().getIntExtra("extra_surfaces", 0)));
+        renderer.setExtraSurfaceCount(extraSurfaces);
+        android.util.Log.i("LiquidGlassDemo", "SURFACE_COUNT main=1 additional=" + extraSurfaces + " total=" + (extraSurfaces + 1));
         glView = new GLSurfaceView(this);
         glView.setEGLContextClientVersion(2);
         glView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         glView.setPreserveEGLContextOnPause(true);
         glView.setRenderer(renderer);
-        glView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        glView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         root.addView(glView, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
@@ -86,7 +108,8 @@ public final class MainActivity extends Activity {
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setGravity(Gravity.CENTER_VERTICAL);
         panel.setPadding(dp(25), dp(23), dp(25), dp(20));
-        panel.setBackground(roundedStroke(0x0DDBF3FF, 0x55E9F7FF, 32));
+        panel.setBackground(roundedStroke(highContrastEnabled ? 0xFF05070B : 0x0DDBF3FF,
+                highContrastEnabled ? Color.WHITE : 0x55E9F7FF, 32));
         panel.setElevation(dp(18));
         panel.setClipChildren(false);
         panel.setClipToPadding(false);
@@ -124,12 +147,13 @@ public final class MainActivity extends Activity {
         strength.setThumbTintList(android.content.res.ColorStateList.valueOf(0xFFEAFBFF));
         strength.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x558FAACD));
         LinearLayout.LayoutParams seekParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(42));
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
         seekParams.topMargin = dp(6);
         panel.addView(strength, seekParams);
         strength.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 renderer.setStrength(0.45f + (value / 100.0f) * 0.95f);
+                if (glView != null) glView.requestRender();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override public void onStopTrackingTouch(SeekBar seekBar) { }
@@ -139,13 +163,13 @@ public final class MainActivity extends Activity {
         controls.setOrientation(LinearLayout.HORIZONTAL);
         controls.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams controlsParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(52));
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(56));
         controlsParams.topMargin = dp(10);
 
         playButton = button("Pause preview");
         playButton.setContentDescription("Pause optical preview");
         morphButton = button("Connect lens");
-        LinearLayout.LayoutParams firstButton = new LinearLayout.LayoutParams(0, dp(46), 1);
+        LinearLayout.LayoutParams firstButton = new LinearLayout.LayoutParams(0, dp(48), 1);
         firstButton.rightMargin = dp(7);
         LinearLayout.LayoutParams secondButton = new LinearLayout.LayoutParams(0, dp(46), 1);
         secondButton.leftMargin = dp(7);
@@ -153,7 +177,8 @@ public final class MainActivity extends Activity {
         controls.addView(morphButton, secondButton);
         panel.addView(controls, controlsParams);
 
-        status = text("GL CONTEXT · INITIALIZING", 8, 0xFF9CCCE5, false);
+        status = text("GL CONTEXT · INITIALIZING", 10, 0xFF9CCCE5, false);
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
         status.setTypeface(Typeface.MONOSPACE);
         status.setLetterSpacing(0.04f);
         status.setGravity(Gravity.CENTER);
@@ -173,17 +198,19 @@ public final class MainActivity extends Activity {
         playButton.setOnClickListener(view -> {
             playing = !playing;
             renderer.setPlaying(playing);
+            scheduleFrames();
             playButton.setText(playing ? "Pause preview" : "Play preview");
             playButton.setContentDescription(playing ? "Pause optical preview" : "Play optical preview");
         });
         morphButton.setOnClickListener(view -> {
             connected = !connected;
             renderer.setMorphTarget(connected ? 1.0f : 0.0f);
+            scheduleFrames();
             morphButton.setText(connected ? "Separate lens" : "Connect lens");
             morphButton.setContentDescription(connected ? "Separate the connected liquid lens" : "Connect the liquid lens");
         });
 
-        TextView footer = text("L2 REFRACTION  ·  L3 CONNECTED SHAPE  ·  JAVA / GLES 2.0", 8, 0xFF8295B6, false);
+        TextView footer = text("L2 REFRACTION  ·  L3 CONNECTED SHAPE  ·  JAVA / GLES 2.0", 9, 0xFF9FB0CD, false);
         footer.setTypeface(Typeface.MONOSPACE);
         footer.setGravity(Gravity.CENTER);
         footer.setLetterSpacing(0.04f);
@@ -226,10 +253,11 @@ public final class MainActivity extends Activity {
         view.setTextSize(11);
         view.setAllCaps(false);
         view.setTextColor(0xFFF2F8FF);
-        view.setMinHeight(dp(44));
-        view.setMinimumHeight(dp(44));
+        view.setMinHeight(dp(48));
+        view.setMinimumHeight(dp(48));
         view.setPadding(dp(10), 0, dp(10), 0);
-        view.setBackground(roundedStroke(0x334F7495, 0x889DEBFF, 24));
+        view.setBackground(roundedStroke(highContrastEnabled ? 0xFF101820 : 0x334F7495,
+                highContrastEnabled ? Color.WHITE : 0xFF9DEBFF, 24));
         view.setStateListAnimator(null);
         return view;
     }
@@ -254,19 +282,43 @@ public final class MainActivity extends Activity {
         return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
+    private boolean isReducedMotionEnabled() {
+        if (Build.VERSION.SDK_INT >= 26 && !ValueAnimator.areAnimatorsEnabled()) return true;
+        try {
+            return Settings.Global.getFloat(getContentResolver(), Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f;
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    private void scheduleFrames() {
+        frameHandler.removeCallbacks(framePump);
+        if (!activityResumed || glView == null) return;
+        glView.requestRender();
+        if ((playing && !reducedMotionEnabled) || (renderer != null && renderer.isMorphing())) frameHandler.postDelayed(framePump, 16);
+    }
+
     @Override protected void onResume() {
         super.onResume();
+        activityResumed = true;
+        reducedMotionEnabled = isReducedMotionEnabled();
+        if (renderer != null) renderer.setReducedMotion(reducedMotionEnabled);
         if (glView != null) glView.onResume();
         statusHandler.post(statusPoll);
+        scheduleFrames();
     }
 
     @Override protected void onPause() {
+        activityResumed = false;
+        frameHandler.removeCallbacks(framePump);
         statusHandler.removeCallbacks(statusPoll);
         if (glView != null) glView.onPause();
         super.onPause();
     }
 
     @Override protected void onDestroy() {
+        activityResumed = false;
+        frameHandler.removeCallbacks(framePump);
         statusHandler.removeCallbacks(statusPoll);
         if (renderer != null) renderer.release();
         super.onDestroy();

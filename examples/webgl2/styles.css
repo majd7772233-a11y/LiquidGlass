@@ -158,22 +158,33 @@ button { color: inherit; }
 #progress {
   display: block;
   width: 100%;
-  height: 4px;
+  height: 44px;
   margin: 0;
+  padding: 0;
   appearance: none;
-  border-radius: 10px;
-  background: linear-gradient(90deg, rgba(172, 231, 255, .78), rgba(210, 199, 255, .22));
+  background: transparent;
   cursor: pointer;
+  touch-action: pan-y;
+}
+#progress::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(172, 231, 255, .9), rgba(210, 199, 255, .42));
+}
+#progress::-moz-range-track {
+  height: 5px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(172, 231, 255, .9), rgba(210, 199, 255, .42));
 }
 #progress::-webkit-slider-thumb {
   appearance: none;
-  width: 12px; height: 12px; border-radius: 50%;
+  width: 16px; height: 16px; margin-top: -5.5px; border-radius: 50%;
   border: 2px solid #f5fbff;
   background: #9fe7f8;
   box-shadow: 0 0 12px rgba(159, 231, 248, .75);
 }
 #progress::-moz-range-thumb {
-  width: 9px; height: 9px; border-radius: 50%;
+  width: 13px; height: 13px;
   border: 2px solid #f5fbff;
   background: #9fe7f8;
   box-shadow: 0 0 12px rgba(159, 231, 248, .75);
@@ -181,7 +192,7 @@ button { color: inherit; }
 .time-row { margin-top: 8px; color: rgba(222, 231, 255, .47); font: 9px ui-monospace, monospace; }
 .control-row { justify-content: center; gap: 14px; margin: 20px 0 20px; }
 .play-control, .icon-control, .morph-control {
-  min-height: 46px;
+  min-height: 48px;
   border: 1px solid rgba(245, 250, 255, .22);
   cursor: pointer;
   transition: transform .2s ease, border-color .2s ease, background .2s ease;
@@ -210,7 +221,7 @@ button { color: inherit; }
 }
 .play-glyph { font-size: 12px; color: #b6f0ff; }
 .icon-control {
-  width: 46px; padding: 0;
+  width: 48px; min-height: 48px; padding: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, .06);
   color: rgba(242, 247, 255, .85);
@@ -218,13 +229,13 @@ button { color: inherit; }
 .panel-footer { gap: 16px; padding-top: 15px; border-top: 1px solid rgba(240, 247, 255, .13); }
 .material-state { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
 .state-indicator { flex: none; background: #90cfff; box-shadow: 0 0 12px rgba(130, 207, 255, .7); }
-#renderer-status { color: rgba(224, 237, 255, .6); font: 8px ui-monospace, monospace; letter-spacing: .07em; }
+#renderer-status { color: rgba(235, 243, 255, .82); font: 10px ui-monospace, monospace; letter-spacing: .035em; }
 .morph-control {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 34px;
-  padding: 0 12px;
+  min-height: 44px;
+  padding: 0 14px;
   border-radius: 999px;
   background: rgba(218, 236, 255, .08);
   color: #e7f0ff;
@@ -270,4 +281,31 @@ html.no-webgl #scene { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+
+@media (prefers-contrast: more) {
+  .glass-panel { background: rgba(4, 9, 18, .97); border: 2px solid #fff; box-shadow: none; }
+  .track-index, .play-control, .icon-control, .morph-control { background: #101d30; border: 2px solid #fff; color: #fff; }
+  .stage-copy, .topbar-meta, .page-footer, .stage-caption, .time-row, #renderer-status { color: #fff; }
+  .panel-kicker, .eyebrow { color: #fff; }
+}
+
+@media (prefers-reduced-transparency: reduce), html[data-transparency="reduced"] {
+  .glass-panel { background: #080d1d; border: 2px solid #f4f7ff; box-shadow: none; }
+  .track-index, .play-control, .icon-control, .morph-control { background: #14243a; border: 1px solid #f4f7ff; }
+  .ambient-noise { display: none; }
+}
+
+@media (forced-colors: active) {
+  .glass-panel, .track-index, .play-control, .icon-control, .morph-control {
+    forced-color-adjust: auto;
+    background: Canvas;
+    color: CanvasText;
+    border: 2px solid ButtonText;
+    box-shadow: none;
+  }
+  .stage-heading h1 span { color: CanvasText; background: none; -webkit-text-fill-color: currentColor; }
+  .stage-copy, .topbar-meta, .page-footer, .stage-caption, .time-row, #renderer-status, .panel-kicker, .eyebrow { color: CanvasText; }
+  .live-dot, .state-indicator { background: Highlight; box-shadow: none; }
+  .play-control:focus-visible, .icon-control:focus-visible, .morph-control:focus-visible, #progress:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
 }
