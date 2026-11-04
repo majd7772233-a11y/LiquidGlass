@@ -127,12 +127,13 @@ grep -Fq "GL_ACCESSIBILITY reduced_motion=true high_text_contrast=true" artifact
 adb shell settings put secure high_text_contrast_enabled 0
 adb shell settings put global animator_duration_scale 1
 
-# Landscape configuration: rotate the actual emulator display, then validate app configuration and capture.
-adb shell settings put system accelerometer_rotation 1
-adb shell wm user-rotation free
+# Landscape configuration: use the Android WindowManager user-rotation lock.
+# This is deterministic on headless emulator images where the accelerometer sensor does not report rotation.
+adb shell settings put system accelerometer_rotation 0
+adb shell settings put system user_rotation 1
+adb shell wm user-rotation lock 1
 adb shell wm size 1280x720
 adb shell wm density 160
-adb emu rotate
 sleep 2
 adb shell am force-stop org.liquidglass.reference.debug
 adb logcat -c
@@ -192,7 +193,7 @@ display = Path("artifacts/android-landscape-display-size.txt").read_text(encodin
 if not re.search(r"Override size:\s*1280x720", display):
     raise SystemExit("WindowManager did not retain the requested 1280x720 landscape viewport.")
 user_rotation = Path("artifacts/android-landscape-user-rotation.txt").read_text(encoding="utf-8")
-if "free" not in user_rotation and not re.search(r"lock [13]", user_rotation):
+if not re.search(r"lock 1", user_rotation):
     raise SystemExit("The emulator did not report a landscape user rotation.")
 
 png = Path("artifacts/android-gles2-landscape.png").read_bytes()
@@ -206,7 +207,7 @@ PY
 # Restore defaults, unlock the emulator, and exercise four independent refractive SDF surfaces.
 adb shell wm size reset
 adb shell wm density reset
-adb shell settings put system accelerometer_rotation 1
+adb shell settings put system accelerometer_rotation 0
 adb shell wm user-rotation lock 0
 adb shell settings put system user_rotation 0
 adb shell input keyevent KEYCODE_WAKEUP || true

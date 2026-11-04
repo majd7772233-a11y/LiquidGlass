@@ -13,6 +13,13 @@ adb shell am start -n "$PACKAGE/org.liquidglass.reference.MainActivity" --ei ext
 sleep 12
 
 adb logcat -d -s LiquidGlassDemo:I > artifacts/android-performance.log
+adb shell uiautomator dump /sdcard/liquid-glass-performance.xml >/dev/null
+adb pull /sdcard/liquid-glass-performance.xml artifacts/android-window-performance.xml
+if ! grep -Fq "SURFACE_COUNT main=1 additional=3 total=4" artifacts/android-performance.log; then
+  echo "Performance run did not exercise four SDF surfaces." >&2
+  cat artifacts/android-performance.log >&2
+  exit 1
+fi
 adb shell dumpsys gfxinfo "$PACKAGE" > artifacts/android-gfxinfo.txt
 adb shell dumpsys gfxinfo "$PACKAGE" framestats > artifacts/android-gfxinfo-framestats.txt
 adb shell dumpsys meminfo "$PACKAGE" > artifacts/android-meminfo.txt
@@ -63,4 +70,6 @@ Path("artifacts/android-performance-summary.json").write_text(
 print("Captured Android frame pacing, CPU submission, memory, display, battery, thermal, and surface diagnostics.")
 if not perf:
     raise SystemExit("No PERF sample was emitted during the 12-second profiling window.")
+if not any("surfaces=4" in item for item in perf):
+    raise SystemExit("No four-surface PERF sample was emitted during the profiling window.")
 PY
