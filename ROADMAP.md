@@ -184,10 +184,11 @@ Acceptance:
 - [x] Keep code-writing operations explicit and scoped to user-authorized projects.
 - [x] Establish shared knowledge synchronization from canonical Skill/specification files into the portable Studio package.
 - [x] Add a reproducible plugin package builder and automated manifest, binding, reference, and archive tests.
-- [ ] Create the private plugin in the user's account and verify its host installation/availability and GitHub binding.
+- [x] Create the private plugin in the user's personal account; verify its private metadata, current release, 28-file package inventory, and `.app.json` GitHub connector ID.
+- [ ] Verify an actual `@Liquid Glass Studio` invocation in the ChatGPT host UI. The connected tools can verify account creation and the package binding but cannot inspect the user's live ChatGPT UI activation state.
 
 **Acceptance:**
-- The private plugin is saved in the account and its host availability/GitHub binding are verified, or the remaining user activation step is precisely recorded.
+- The private plugin is saved in the personal account; its release metadata, packaged Skill, and GitHub app binding are verified. Actual host invocation must be verified in the ChatGPT UI before changing Phase 4 from In progress to Complete.
 - Each Studio workflow has a clear contract and meaningful automated regression coverage.
 - The workflow can take a request from reference to platform-aware repository implementation and review through the GitHub connector.
 - Studio and `$liquid-glass` use the same packaged specifications and L0–L3 definitions.
