@@ -12,6 +12,7 @@ This is not a synonym for ordinary glassmorphism. The target combines background
 - [Interaction and motion](docs/interaction-and-motion.md) — shape transitions and interaction behavior.
 - [Reference matrix](docs/reference-matrix.md) — maps reference assets to review criteria.
 - [Examples catalog](examples/README.md) — visual reference image catalog.
+- [Platform adaptation guide](docs/platform-adaptation/README.md) — capability matrix and verified family-specific approaches.
 - [Codex Skill](.agents/skills/liquid-glass/SKILL.md) — platform-neutral coding Skill for implementation and review.
 - [Skill installation](.agents/skills/liquid-glass/INSTALL.md) — repository-local and personal installation/update instructions.
 
