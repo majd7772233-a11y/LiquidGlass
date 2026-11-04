@@ -1,5 +1,6 @@
+import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdir, stat } from "node:fs/promises";
+import { mkdir, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -18,6 +19,12 @@ async function waitForServer() {
   throw new Error("The demo HTTP server did not start.");
 }
 
+function assertTarget(box, label, min = 44) {
+  assert.ok(box, label + " has no measurable hit target.");
+  assert.ok(box.width >= min && box.height >= min,
+    label + " is smaller than the " + min + " CSS-pixel target: " + JSON.stringify(box));
+}
+
 try {
   await waitForServer();
   browser = await chromium.launch({
@@ -26,42 +33,147 @@ try {
   });
   const artifactDir = fileURLToPath(new URL("../artifacts/", import.meta.url));
   await mkdir(artifactDir, { recursive: true });
+  const pageErrors = [];
 
   const desktop = await browser.newPage({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 1 });
-  const pageErrors = [];
   desktop.on("pageerror", error => pageErrors.push(error.message));
-  await desktop.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
+  await desktop.goto("http://127.0.0.1:4173/?scene=midnight", { waitUntil: "networkidle" });
   await desktop.waitForFunction(() => document.documentElement.dataset.renderer === "webgl2-l2-l3", { timeout: 15000 });
 
-  const renderer = await desktop.locator("html").getAttribute("data-renderer");
-  if (renderer !== "webgl2-l2-l3") throw new Error("The demo did not initialize its WebGL2 renderer.");
+  assert.equal(await desktop.locator("html").getAttribute("data-renderer"), "webgl2-l2-l3");
+  assert.equal(await desktop.getByRole("button", { name: "Previous track" }).count(), 1);
+  assert.equal(await desktop.getByRole("button", { name: "Next track" }).count(), 1);
+  assert.equal(await desktop.getByRole("slider", { name: "Preview position" }).count(), 1);
+  assert.equal(await desktop.getByRole("button", { name: "Connect the lens" }).count(), 1);
+
+  for (const selector of ["#previous", "#play-toggle", "#next", "#morph-toggle"]) {
+    assertTarget(await desktop.locator(selector).boundingBox(), selector);
+  }
+  assertTarget(await desktop.locator("#progress").boundingBox(), "#progress", 40);
 
   const morph = desktop.locator("#morph-toggle");
   await morph.click();
-  if (await morph.getAttribute("aria-pressed") !== "true") throw new Error("The organic lens control did not enter its connected state.");
+  assert.equal(await morph.getAttribute("aria-pressed"), "true");
   await desktop.waitForTimeout(450);
-  await desktop.screenshot({ path: join(artifactDir, "webgl2-desktop.png"), fullPage: true });
+  await desktop.screenshot({ path: join(artifactDir, "webgl2-desktop-connected.png"), fullPage: true });
 
   const play = desktop.locator("#play-toggle");
   await play.click();
-  if (await play.getAttribute("aria-pressed") !== "true") throw new Error("The play/pause control did not update its semantic state.");
+  assert.equal(await play.getAttribute("aria-pressed"), "true");
   await desktop.locator("#progress").evaluate(element => {
     element.value = "72";
     element.dispatchEvent(new Event("input", { bubbles: true }));
   });
-  if (await desktop.locator("#progress").inputValue() !== "72") throw new Error("The timeline slider did not accept input.");
+  assert.equal(await desktop.locator("#progress").inputValue(), "72");
 
-  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
-  await mobile.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
-  await mobile.waitForFunction(() => document.documentElement.dataset.renderer === "webgl2-l2-l3", { timeout: 15000 });
-  await mobile.screenshot({ path: join(artifactDir, "webgl2-mobile.png"), fullPage: true });
+  await desktop.locator("body").click({ position: { x: 2, y: 2 } });
+  for (let index = 0; index < 6; index += 1) await desktop.keyboard.press("Tab");
+  assert.equal(await desktop.evaluate(() => document.activeElement?.id), "morph-toggle",
+    "Keyboard tab order must reach the morph action after the preceding controls.");
+  const focusStyle = await morph.evaluate(element => {
+    const style = getComputedStyle(element);
+    return { outlineStyle: style.outlineStyle, outlineWidth: parseFloat(style.outlineWidth) };
+  });
+  assert.notEqual(focusStyle.outlineStyle, "none");
+  assert.ok(focusStyle.outlineWidth >= 2, "Keyboard focus must have a visible outline.");
+
+  const matrix = [
+    { name: "desktop-midnight", width: 1440, height: 960, dpr: 1, scene: "midnight" },
+    { name: "tablet-bright", width: 768, height: 1024, dpr: 1, scene: "bright" },
+    { name: "mobile-detailed", width: 390, height: 844, dpr: 2, scene: "detailed" },
+    { name: "landscape-bright", width: 844, height: 390, dpr: 2, scene: "bright" }
+  ];
+  const captures = [];
+  for (const scenario of matrix) {
+    const page = await browser.newPage({
+      viewport: { width: scenario.width, height: scenario.height },
+      deviceScaleFactor: scenario.dpr,
+      isMobile: scenario.width < 500,
+      hasTouch: scenario.width < 500
+    });
+    page.on("pageerror", error => pageErrors.push(error.message));
+    await page.goto("http://127.0.0.1:4173/?scene=" + scenario.scene, { waitUntil: "networkidle" });
+    await page.waitForFunction(() => document.documentElement.dataset.renderer === "webgl2-l2-l3", { timeout: 15000 });
+    const diagnostics = await page.evaluate(() => window.__liquidGlassDiagnostics());
+    assert.equal(diagnostics.scene, scenario.scene);
+    assert.equal(diagnostics.width, Math.floor(scenario.width * Math.min(scenario.dpr, 1.65)));
+    assert.equal(diagnostics.height, Math.floor(scenario.height * Math.min(scenario.dpr, 1.65)));
+    assert.ok(diagnostics.estimatedSceneTextureBytes > 0);
+    assert.equal(diagnostics.drawCallsPerFrame, 2);
+    await page.screenshot({ path: join(artifactDir, scenario.name + ".png"), fullPage: true });
+    captures.push({ ...scenario, diagnostics });
+    await page.close();
+  }
+
+  const accessibility = await browser.newPage({ viewport: { width: 1024, height: 768 } });
+  await accessibility.emulateMedia({ reducedMotion: "reduce", contrast: "more" });
+  await accessibility.goto("http://127.0.0.1:4173/?scene=midnight", { waitUntil: "networkidle" });
+  await accessibility.waitForFunction(() => document.documentElement.dataset.renderer === "webgl2-l2-l3");
+  const accessibleMorph = accessibility.locator("#morph-toggle");
+  await accessibleMorph.click();
+  await accessibility.waitForFunction(() => {
+    const value = window.__liquidGlassDiagnostics?.();
+    return value && value.morph === 1 && value.morphTarget === 1;
+  });
+  let accessibilityStyles = await accessibility.locator("#glass-panel").evaluate(element => {
+    const style = getComputedStyle(element);
+    return { background: style.backgroundColor, borderWidth: parseFloat(style.borderTopWidth),
+      reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      increasedContrast: matchMedia("(prefers-contrast: more)").matches };
+  });
+  assert.equal(accessibilityStyles.reducedMotion, true);
+  assert.equal(accessibilityStyles.increasedContrast, true);
+  assert.ok(accessibilityStyles.borderWidth >= 2);
+  assert.match(accessibilityStyles.background, /rgba\(.+,\s*0\.97\)/);
+
+  await accessibility.emulateMedia({ reducedMotion: "no-preference", contrast: "no-preference" });
+  await accessibility.locator("html").evaluate(element => element.dataset.transparency = "reduced");
+  const reducedTransparency = await accessibility.locator("#glass-panel").evaluate(element => {
+    const style = getComputedStyle(element);
+    return { background: style.backgroundColor, backdropFilter: style.backdropFilter };
+  });
+  assert.equal(reducedTransparency.background, "rgb(8, 13, 29)");
+  assert.equal(reducedTransparency.backdropFilter, "none");
+
+  await accessibility.emulateMedia({ forcedColors: "active" });
+  assert.equal(await accessibility.evaluate(() => matchMedia("(forced-colors: active)").matches), true);
+  assert.equal(await accessibility.getByRole("button", { name: "Separate the lens" }).count(), 1);
+  await accessibility.screenshot({ path: join(artifactDir, "webgl2-accessibility-fallback.png"), fullPage: true });
+
+  await desktop.waitForTimeout(1200);
+  const desktopMetrics = await desktop.evaluate(() => window.__liquidGlassDiagnostics());
+  assert.ok(desktopMetrics.frameSamples > 0, "Frame pacing samples must be collected.");
+  assert.ok(desktopMetrics.averageFrameMs > 0);
+  assert.ok(desktopMetrics.averageCpuSubmitMs >= 0);
+  assert.ok(desktopMetrics.estimatedSceneTextureBytes > 0);
+  assert.equal(desktopMetrics.gpuTimeMs, null,
+    "GPU time is deliberately not inferred from JavaScript command-submission timing.");
 
   if (pageErrors.length) throw new Error("Browser errors: " + pageErrors.join(" | "));
-  for (const path of ["../artifacts/webgl2-desktop.png", "../artifacts/webgl2-mobile.png"]) {
-    const info = await stat(join(artifactDir, path.split("/").at(-1)));
-    if (info.size < 12000) throw new Error("Screenshot is unexpectedly small: " + path);
+  const report = {
+    schemaVersion: 1,
+    environment: "headless Chromium + SwiftShader; CPU timings are command-submission timings, not GPU execution timings",
+    visualMatrix: captures,
+    desktopRuntime: desktopMetrics,
+    accessibility: {
+      keyboardFocus: focusStyle,
+      reducedMotionAndContrast: accessibilityStyles,
+      reducedTransparency: reducedTransparency,
+      forcedColors: true
+    },
+    limitations: [
+      "SwiftShader/headless browser results are not physical-GPU performance evidence.",
+      "Scene texture bytes estimate one RGBA8 off-screen texture and exclude driver allocations and browser compositor memory.",
+      "GPU execution time is not measured by the JavaScript CPU-submit timer."
+    ]
+  };
+  await writeFile(join(artifactDir, "webgl2-validation-matrix.json"), JSON.stringify(report, null, 2) + "\n");
+
+  for (const scenario of matrix) {
+    const info = await stat(join(artifactDir, scenario.name + ".png"));
+    assert.ok(info.size > 12000, "Screenshot is unexpectedly small: " + scenario.name);
   }
-  process.stdout.write("PASS: WebGL2 initialized; owned-backdrop L2/L3 renderer, morph control, playback state, slider, and desktop/mobile captures verified.\n");
+  process.stdout.write("PASS: WebGL2 L2/L3, semantics, 44px hit targets, keyboard focus, reduced motion, increased contrast, reduced transparency, forced colors, 4 visual scenarios, and CPU/memory diagnostics verified.\n");
 } finally {
   if (browser) await browser.close();
   server.kill("SIGTERM");
