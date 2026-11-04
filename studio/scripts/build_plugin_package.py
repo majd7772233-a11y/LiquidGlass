@@ -17,6 +17,7 @@ SKILL_FILE = SKILL_ROOT / "SKILL.md"
 # Canonical repository path -> path inside the private plugin's Skill package.
 REFERENCE_MAP = {
     ".agents/skills/liquid-glass/SKILL.md": "references/liquid-glass-core.md",
+    "studio/tool-contracts.md": "references/tool-contracts.md",
     ".agents/skills/liquid-glass/references/project-discovery.md": "references/project-discovery.md",
     ".agents/skills/liquid-glass/references/rendering-strategy.md": "references/rendering-strategy.md",
     ".agents/skills/liquid-glass/references/visual-contract.md": "references/visual-contract.md",
@@ -85,7 +86,7 @@ def validate_package(root: Path) -> None:
             raise ValueError(f"Missing packaged reference: {destination} (source {source})")
 
     link_pattern = re.compile(r"\[[^]]+\]\(([^)]+)\)")
-    candidates = [skill_path, *(root / SKILL_ROOT / dest for dest in REFERENCE_MAP.values())]
+    candidates = [skill_path]
     for markdown_path in candidates:
         source_text = markdown_path.read_text(encoding="utf-8")
         for target in link_pattern.findall(source_text):

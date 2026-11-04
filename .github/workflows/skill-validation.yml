@@ -35,6 +35,17 @@ jobs:
       - name: Run Liquid Glass Studio package tests
         run: python -m unittest discover -s studio/tests -v
 
+      - name: Build private Studio plugin archive
+        run: python studio/scripts/build_plugin_package.py --output /tmp/liquid-glass-studio.zip
+
+      - name: Upload private Studio plugin archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: liquid-glass-studio-plugin
+          path: /tmp/liquid-glass-studio.zip
+          if-no-files-found: error
+          retention-days: 3
+
       - name: Run read-only project inventory smoke test
         run: |
           python .agents/skills/liquid-glass/scripts/inspect_project.py .

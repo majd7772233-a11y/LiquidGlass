@@ -25,7 +25,7 @@ Load only the packaged references relevant to the current task:
 - [Implementation workflow](references/implementation-workflow.md)
 - [Platform adaptation index](references/platform-adaptation/README.md)
 - [Platform capability matrix](references/platform-adaptation/capability-matrix.md)
-- Matching family guide under [platform adaptation](references/platform-adaptation/).
+- Matching family guide under [platform adaptation](references/platform-adaptation/README.md).
 - For Android, [Android library and renderer catalog](references/platform-adaptation/android-library-catalog.md).
 - [Worked workflow catalog](references/workflow-examples/README.md), plus Android Java/XML and Web DOM fixtures where relevant.
 
