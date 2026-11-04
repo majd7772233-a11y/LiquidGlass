@@ -114,7 +114,7 @@ try {
     assert.equal(diagnostics.drawCallsPerFrame, 2);
     if (scenario.scene === "bright") {
       const contrast = await page.evaluate(() => {
-        const channels = value => (value.match(/[\\d.]+/g) || []).map(Number);
+        const channels = value => (value.match(/[\d.]+/g) || []).map(Number);
         const luminance = rgb => {
           const values = rgb.map(value => {
             const channel = value / 255;
