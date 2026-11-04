@@ -1,0 +1,13 @@
+{
+  "name": "liquid-glass-webgl2-demo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "serve": "node server.mjs",
+    "test": "node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.57.0"
+  }
+}

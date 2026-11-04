@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080d1d">
+  <meta name="description" content="A runnable WebGL2 Liquid Glass reference: app-owned scene texture, shape-aware refraction, and an interactive organic lens.">
+  <title>Liquid Glass · WebGL2 Reference Lab</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="ambient-noise" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="wordmark" href="./" aria-label="Liquid Glass Reference Lab home">
+      <span class="wordmark-mark" aria-hidden="true">◈</span>
+      <span>LIQUID<span class="wordmark-light">GLASS</span></span>
+    </a>
+    <div class="topbar-meta">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span>REFERENCE LAB / 001</span>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="stage-heading">
+      <p class="eyebrow">OPTICAL INTERFACE EXPERIMENT</p>
+      <h1>Light, held <span>in motion.</span></h1>
+      <p class="stage-copy">A small study in transmission, curvature and fluid connection.</p>
+    </div>
+
+    <section class="glass-panel" id="glass-panel" aria-labelledby="panel-title">
+      <div class="panel-topline">
+        <div>
+          <p class="panel-kicker">NOW EXPLORING</p>
+          <h2 id="panel-title">Chromatic Drift</h2>
+        </div>
+        <div class="track-index" aria-label="Track 01 of 04">01 <span>/ 04</span></div>
+      </div>
+
+      <div class="visualizer" aria-hidden="true">
+        <div class="visualizer-line"></div>
+        <div class="visualizer-orb"></div>
+        <div class="visualizer-readout">FIELD STUDY <span>·</span> 00:48</div>
+      </div>
+
+      <div class="timeline">
+        <label class="sr-only" for="progress">Preview position</label>
+        <input id="progress" type="range" min="0" max="100" value="38" step="1">
+        <div class="time-row"><span id="elapsed">00:18</span><span>00:48</span></div>
+      </div>
+
+      <div class="control-row">
+        <button class="icon-control secondary" id="previous" type="button" aria-label="Previous track">
+          <span aria-hidden="true">|◀</span>
+        </button>
+        <button class="play-control" id="play-toggle" type="button" aria-pressed="false">
+          <span class="play-glyph" aria-hidden="true">▶</span>
+          <span class="play-label">Play preview</span>
+        </button>
+        <button class="icon-control secondary" id="next" type="button" aria-label="Next track">
+          <span aria-hidden="true">▶|</span>
+        </button>
+      </div>
+
+      <div class="panel-footer">
+        <div class="material-state">
+          <span class="state-indicator" aria-hidden="true"></span>
+          <span id="renderer-status" role="status" aria-live="polite">Preparing optical renderer…</span>
+        </div>
+        <button class="morph-control" id="morph-toggle" type="button" aria-pressed="false">
+          <span class="morph-symbol" aria-hidden="true">✳</span>
+          <span class="morph-label">Connect the lens</span>
+        </button>
+      </div>
+    </section>
+
+    <div class="stage-caption">
+      <span>01 — OWNED BACKDROP</span>
+      <span>02 — REFRACTIVE SURFACE</span>
+      <span>03 — SEMANTIC CONTROLS</span>
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    <span>WEBGL2 / GLSL ES 3.00</span>
+    <span>REAL BACKDROP DISPLACEMENT · NO IMAGE FILTER MOCKUP</span>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
