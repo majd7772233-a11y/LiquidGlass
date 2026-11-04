@@ -219,10 +219,18 @@ public final class MainActivity extends Activity {
         root.addView(footer, footerParams);
 
         setContentView(root);
-        root.post(() -> android.util.Log.i("LiquidGlassDemo",
-                "UI_READY activity=MainActivity width=" + root.getWidth()
-                        + " height=" + root.getHeight()
-                        + " panel_width=" + panel.getWidth()));
+        root.post(() -> {
+            android.content.res.Configuration configuration = getResources().getConfiguration();
+            android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
+            android.util.Log.i("LiquidGlassDemo",
+                    "UI_READY activity=MainActivity width=" + root.getWidth()
+                            + " height=" + root.getHeight()
+                            + " orientation=" + configuration.orientation
+                            + " screen_width_dp=" + configuration.screenWidthDp
+                            + " screen_height_dp=" + configuration.screenHeightDp
+                            + " density=" + metrics.density
+                            + " panel_width=" + panel.getWidth());
+        });
     }
 
     private void updateLensRect() {
