@@ -140,6 +140,7 @@ class SkillPackageTests(unittest.TestCase):
         ):
             self.assertIn(source_domain, matrix)
 
+        self.assertTrue((EXAMPLES / "README.md").is_file(), "Missing platform workflow catalog")
         required_workflows = ("web-dom/WORKFLOW.md", "android-java/WORKFLOW.md") + PLATFORM_WORKFLOWS
         for relative_path in required_workflows:
             workflow = EXAMPLES / relative_path
