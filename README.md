@@ -12,9 +12,11 @@ This is not a synonym for ordinary glassmorphism. The target combines background
 - [Interaction and motion](docs/interaction-and-motion.md) — shape transitions and interaction behavior.
 - [Reference matrix](docs/reference-matrix.md) — maps reference assets to review criteria.
 - [Examples catalog](examples/README.md) — visual reference image catalog.
+- [Codex Skill](.agents/skills/liquid-glass/SKILL.md) — platform-neutral coding Skill for implementation and review.
+- [Skill installation](.agents/skills/liquid-glass/INSTALL.md) — repository-local and personal installation/update instructions.
 
 ## Working principle
 
 Study the references, inspect the target project's actual platform and rendering capabilities, then choose the strongest technically sound implementation for that environment. Do not force one framework or rendering engine onto every platform, and do not claim visual parity without a buildable implementation and visual validation.
 
-The project is intended to grow into a reusable, platform-aware coding Skill and a dedicated Liquid Glass Studio assistant workflow. Those deliverables are planned in the roadmap; their presence must not be implied until they are implemented and tested.
+The reusable, platform-aware Codex Skill is now available at `.agents/skills/liquid-glass/`. The dedicated Liquid Glass Studio assistant/plugin workflow remains planned in the roadmap and is not implied to exist yet.

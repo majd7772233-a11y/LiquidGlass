@@ -20,7 +20,7 @@ A requested roadmap phase is one complete delivery unit. The agent must finish e
 |---|---|---|
 | 0. Repository and reference baseline | In progress | Project instructions, roadmap, and organized visual references |
 | 1. Visual specification | Complete | Testable, platform-neutral material, interaction, motion, and reference criteria |
-| 2. Core coding Skill | Not started | Installable Skill with reliable discovery and implementation workflow |
+| 2. Core coding Skill | Complete | Portable Codex Skill with project inspection, renderer selection, install guide, web and Android workflows, and package tests |
 | 3. Platform adaptation guidance | Not started | Technique selection and adapter guidance for major platform families |
 | 4. Liquid Glass Studio workflow | Not started | Dedicated assistant/plugin capabilities and tool contracts |
 | 5. Reference implementations | Not started | Small, runnable examples demonstrating distinct material capabilities |
@@ -74,28 +74,38 @@ Acceptance:
 
 ## Phase 2 — Core coding Skill
 
+<badge>Complete</badge>
+
 **Goal:** create a portable, installable Skill that makes coding agents follow the project's discovery, planning, implementation, and validation process.
 
 Tasks:
-- Define the Skill metadata and installation layout according to the current official Codex Skill format; verify the format at implementation time.
-- Write a concise entry-point instruction file that delegates detailed material, rendering, platform, accessibility, and validation guidance to focused references.
-- Add a project-detection workflow that identifies language, framework, runtime, build tooling, graphics APIs, minimum device/OS, and constraints.
-- Add a decision process for selecting platform-native, GPU/shader, custom-rendering, canvas/DOM, or layered fallback approaches.
-- Define when to inspect existing code, when to add a reusable primitive, and how to avoid unnecessary architecture changes.
-- Add implementation checklists, failure modes, and truthful reporting requirements.
-- Test activation and usefulness in more than one unrelated language/platform family.
+- [x] Define Skill metadata and repository/personal installation layout using the current Codex Skill format.
+- [x] Write a concise entry-point instruction file that delegates detailed material, rendering, platform, accessibility, and validation guidance to focused references.
+- [x] Add a project-detection workflow for languages, frameworks, runtimes, build tools, graphics signals, minimum Android SDK evidence, and project constraints.
+- [x] Add a decision process for native material/compositor, GPU/shader, custom rendering, canvas/DOM, hybrid, and layered fallback approaches.
+- [x] Define repository inspection, minimal integration, semantics, architecture preservation, failure modes, and truthful reporting rules.
+- [x] Add worked web DOM and native Android Java/XML workflows with explicitly different fallback tiers.
+- [x] Add package tests for Skill metadata, local reference links, web discovery, Android Java/XML discovery, minimum SDK extraction, XML parsing, and fidelity-tier honesty.
 
 Deliverables:
-- A documented Skill package (proposed name: liquid-glass).
-- Focused reference documents and minimal examples.
-- Installation and update instructions.
+- [x] [.agents/skills/liquid-glass/SKILL.md](.agents/skills/liquid-glass/SKILL.md) — portable Skill entry point.
+- [x] [.agents/skills/liquid-glass/references/](.agents/skills/liquid-glass/references/) — five focused technical references.
+- [x] [.agents/skills/liquid-glass/examples/](.agents/skills/liquid-glass/examples/) — web DOM and Android Java/XML worked workflows.
+- [x] [.agents/skills/liquid-glass/scripts/inspect_project.py](.agents/skills/liquid-glass/scripts/inspect_project.py) — read-only project inventory helper.
+- [x] [.agents/skills/liquid-glass/tests/test_skill_package.py](.agents/skills/liquid-glass/tests/test_skill_package.py) — automated package and workflow-fixture tests.
+- [x] [.agents/skills/liquid-glass/INSTALL.md](.agents/skills/liquid-glass/INSTALL.md) and [README.md](.agents/skills/liquid-glass/README.md) — installation, update, and package overview.
+- [x] [.agents/skills/liquid-glass/agents/openai.yaml](.agents/skills/liquid-glass/agents/openai.yaml) — optional user-facing metadata.
 
 Acceptance:
-- The Skill activates for Liquid Glass implementation/review tasks without requiring a specific language.
-- It inspects the target environment before selecting techniques.
-- It gives actionable implementation steps rather than generic design advice.
-- It does not force one platform's APIs on another.
-- At least two distinct platform families complete a tested end-to-end workflow.
+- [x] The Skill has a valid `SKILL.md` name/description manifest and lives in the Codex repository skill discovery directory.
+- [x] The description covers Liquid Glass implementation/review across languages and platforms without matching unrelated generic styling.
+- [x] The workflow requires inspecting the actual target environment before choosing APIs or rendering techniques.
+- [x] The workflow gives concrete implementation, accessibility, performance, validation, and reporting steps.
+- [x] Web DOM and native Android Java/XML fixtures exercise different discovery and fallback decisions without forcing one platform's APIs on the other.
+- [x] All five package tests pass; Python syntax checks pass; internal Skill reference links resolve.
+- [x] Installation and update instructions are provided for Windows PowerShell and macOS/Linux.
+
+**Verification boundary:** package tests validate the Skill structure, references, read-only project detection, Android minimum-SDK evidence/XML parsing, and the documented workflows for two different platform families. They do not launch a Codex client to measure implicit skill routing, build/deploy either fixture as a real app, or prove visual refraction on physical hardware. Use explicit `$liquid-glass` invocation when deterministic selection is needed. Runtime demonstrations and visual/performance evidence remain in later roadmap phases.
 
 ## Phase 3 — Platform adaptation guidance
 

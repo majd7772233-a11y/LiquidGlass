@@ -1,0 +1,4 @@
+interface:
+  display_name: "Liquid Glass"
+  short_description: "Implement and review cross-platform refractive glass UI."
+  default_prompt: "Use the liquid-glass skill to inspect this project, choose a platform-appropriate rendering strategy, and implement or review the requested Liquid Glass behavior."

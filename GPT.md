@@ -42,6 +42,10 @@ Before every substantial task:
 
 Treat the visual reference assets as the target for appearance, not as implementation instructions. Treat the target project's existing architecture as the source of truth for integration. Avoid asking the user to repeat information already present in repository files or conversation context.
 
+### 3.1 Core coding Skill
+
+For any task that implements, adapts, reviews, or debugs Liquid Glass, load `.agents/skills/liquid-glass/SKILL.md` and follow its mandatory workflow. The Skill is the reusable entry point; its focused references, project-inspection helper, and worked workflows are bundled alongside it. Keep the Skill language/platform-neutral and let evidence from the target project determine the rendering approach. Do not imply that the dedicated Liquid Glass Studio plugin exists; that remains a later roadmap phase.
+
 ## 4. Visual target: what Liquid Glass means here
 
 A convincing result may combine the following, as appropriate to the reference and platform:
