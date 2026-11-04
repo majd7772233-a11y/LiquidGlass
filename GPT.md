@@ -40,9 +40,10 @@ Before every substantial task:
 1. Read this file and the relevant sections of ROADMAP.md.
 2. Inspect the repository tree and the latest commit. Do not assume a previously remembered file layout is still current.
 3. Read the relevant example catalog in examples/README.md and inspect the actual reference images when available.
-4. Read the specification documents under docs/ before implementing or reviewing material and motion behavior.
-5. Inspect the target project's source, framework, language, build system, deployment target, rendering APIs, and existing design conventions before proposing an implementation.
-6. Identify constraints and state the intended approach before making broad or destructive changes.
+4. Read the specification documents under docs/ before implementing or reviewing material and motion behavior. Include docs/platform-adaptation/README.md and the matching family guide before selecting platform APIs.
+5. Use docs/skill-installation.md for ChatGPT Desktop on Windows; the confirmed personal Skills directory for that Microsoft Store setup is $HOME\\.codex\\skills. The repository copy remains under .agents/skills.
+6. Inspect the target project's source, framework, language, build system, deployment target, rendering APIs, and existing design conventions before proposing an implementation.
+7. Identify constraints and state the intended approach before making broad or destructive changes.
 
 Treat the visual reference assets as the target for appearance, not as implementation instructions. Treat the target project's existing architecture as the source of truth for integration. Avoid asking the user to repeat information already present in repository files or conversation context.
 
