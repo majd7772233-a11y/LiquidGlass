@@ -21,7 +21,7 @@ A requested roadmap phase is one complete delivery unit. The agent must finish e
 | 0. Repository and reference baseline | In progress | Project instructions, roadmap, and organized visual references |
 | 1. Visual specification | Complete | Testable, platform-neutral material, interaction, motion, and reference criteria |
 | 2. Core coding Skill | Complete | Portable Codex Skill with project inspection, renderer selection, install guide, web and Android workflows, and package tests |
-| 3. Platform adaptation guidance | Not started | Technique selection and adapter guidance for major platform families |
+| 3. Platform adaptation guidance | Complete | Backdrop/capability matrix, seven platform-family guides, nine worked workflow fixtures, and CI validation |
 | 4. Liquid Glass Studio workflow | Not started | Dedicated assistant/plugin capabilities and tool contracts |
 | 5. Reference implementations | Not started | Small, runnable examples demonstrating distinct material capabilities |
 | 6. Validation, accessibility, and performance | Not started | Reproducible visual and runtime quality gates |
@@ -112,9 +112,13 @@ Acceptance:
 
 ## Phase 3 — Platform adaptation guidance
 
+<badge>Complete</badge>
+
 **Goal:** make the Skill useful across materially different rendering environments without pretending every platform has identical capabilities.
 
-Candidate families to research and cover:
+**Research snapshot:** 2026-11-04. API versions and support notes are based on the linked official vendor documentation checked for this phase. Re-check the target project's exact versions at implementation time.
+
+Candidate families covered:
 - Web DOM/CSS and browser graphics pipelines.
 - Native Android UI and custom drawing/rendering.
 - Native iOS/iPadOS UI and graphics pipelines.
@@ -124,14 +128,39 @@ Candidate families to research and cover:
 - Constrained devices or environments with limited backdrop/shader access.
 
 Tasks:
-- Build a capability matrix (backdrop capture, refraction, custom shaders, masks, animation, accessibility hooks, minimum hardware/API).
-- Document the preferred approach and fallback for each family only after technical validation.
-- Keep examples small and independent; do not build a giant shared abstraction prematurely.
-- Record framework/version assumptions and re-check them when updating guidance.
+- [x] Build a capability matrix for backdrop access, refraction route, shaders/custom drawing, masks/motion, accessibility integration, and version/hardware gates.
+- [x] Document a preferred approach and fallback for each family using official vendor API documentation.
+- [x] Distinguish system blur/material APIs from a texture-backed path that can genuinely displace the backdrop.
+- [x] Record composition boundaries and limits: backdrop roots, View/Surface ordering, SwiftUI filtered layers, WinUI composition-tree sources, Qt RHI/software backend, Flutter renderer/backend, and game-engine render-pass/UI ordering.
+- [x] Keep examples small and independent; do not build a universal renderer or a lowest-common-denominator abstraction.
+- [x] Record concrete API/version assumptions and instruct agents to re-check versions against the target project's manifest and official documentation.
+- [x] Add worked adaptation workflows for each covered family and a catalog of expected tiers/validation steps.
+- [x] Add automated regression tests for the guide files, workflow fixtures, official-source coverage, fidelity labels, local Markdown links, and the ChatGPT Desktop installation path.
+- [x] Add GitHub Actions CI to compile the Python helper/tests, run the package suite, and smoke-test the read-only project inventory.
+
+Deliverables:
+- [x] [docs/platform-adaptation/README.md](docs/platform-adaptation/README.md) — family index and evidence/version policy.
+- [x] [docs/platform-adaptation/capability-matrix.md](docs/platform-adaptation/capability-matrix.md) — comparison of backdrop access, refraction route, shader/mask/motion facilities, accessibility, and hardware/API gates.
+- [x] [Web guide](docs/platform-adaptation/web.md) — DOM/backdrop-filter versus app-owned WebGL/WebGPU scene.
+- [x] [Android guide](docs/platform-adaptation/android.md) — API 31 RenderEffect, API 33 RuntimeShader/AGSL, and explicit backdrop-source ownership.
+- [x] [Apple guide](docs/platform-adaptation/apple.md) — UIKit visual effects, SwiftUI Shader modifiers, and app-owned Metal textures.
+- [x] [Desktop guide](docs/platform-adaptation/desktop.md) — WinUI Composition and Qt Quick/RHI, plus framework-specific discovery rules.
+- [x] [Game-engine guide](docs/platform-adaptation/game-engines.md) — Unity 6 URP Full Screen Pass and Unreal Post Process Materials.
+- [x] [Cross-platform guide](docs/platform-adaptation/cross-platform.md) — Flutter BackdropFilter/Impeller and Qt Quick backend distinctions.
+- [x] [Constrained-target guide](docs/platform-adaptation/constrained.md) — stable L0/L1 fallbacks and downgrade rules.
+- [x] [Platform workflow catalog](.agents/skills/liquid-glass/examples/README.md) and seven new family workflows under [.agents/skills/liquid-glass/examples/](.agents/skills/liquid-glass/examples/).
+- [x] [Updated Liquid Glass Skill entry point](.agents/skills/liquid-glass/SKILL.md), linking the platform matrix and worked workflows.
+- [x] [GitHub Actions validation workflow](.github/workflows/skill-validation.yml) and expanded [package tests](.agents/skills/liquid-glass/tests/test_skill_package.py).
 
 Acceptance:
-- Each covered family has a verified approach, explicit capability limits, and a runnable or otherwise reproducibly validated example.
-- Language/framework choices remain discoverable and extensible.
+- [x] Every candidate family has a preferred strategy, explicit limits, a fallback, and official documentation references.
+- [x] The matrix identifies backdrop access/refraction separately from shader, mask, and animation availability.
+- [x] Version/hardware gates are explicit where vendor docs publish them; otherwise the guide requires runtime/availability checks rather than inventing a universal minimum.
+- [x] Each family has a reproducible decision/validation workflow fixture; automated tests verify that all covered families, tiers, and validation steps remain present.
+- [x] Language/framework choices remain discoverable and extensible without forcing one renderer across platforms.
+- [x] GitHub Actions on the published repository passes Python compilation, all 8 package/workflow tests, and the read-only project inventory smoke test.
+
+**Validation boundary:** the workflows are reproducible decision/validation fixtures, not finished visual applications. The passing tests check their structure, source coverage, platform constraints, install guidance, and validation criteria. They do not compile Swift/QML/Unity/Unreal/Flutter applications or prove runtime refraction on physical devices. Runnable visual demonstrations, captures, and device-level performance evidence remain in Phases 5 and 6.
 
 ## Phase 4 — Liquid Glass Studio assistant/plugin workflow
 
