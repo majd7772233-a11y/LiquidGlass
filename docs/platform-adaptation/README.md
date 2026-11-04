@@ -14,7 +14,7 @@
 ## Platform-family guides
 
 - [Web DOM and browser graphics](web.md)
-- [Native Android](android.md)
+- [Native Android](android.md) — mandatory minSdk/runtime policy and [third-party dependency catalog](android-library-catalog.md)
 - [Apple platforms](apple.md)
 - [Desktop UI and compositors](desktop.md)
 - [Game engines](game-engines.md)

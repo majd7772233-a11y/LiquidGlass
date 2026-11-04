@@ -20,6 +20,7 @@ PLATFORM_GUIDES = (
     "capability-matrix.md",
     "web.md",
     "android.md",
+    "android-library-catalog.md",
     "apple.md",
     "desktop.md",
     "game-engines.md",
@@ -112,6 +113,8 @@ class SkillPackageTests(unittest.TestCase):
             self.assertIn(stage, trace)
         self.assertIn("l0", trace)
         self.assertIn("does not", trace)
+        for policy in ("existing app", "new app", "minSdk", "Build.VERSION.SDK_INT", "33+"):
+            self.assertIn(policy.lower(), trace)
 
     def test_platform_neutrality_and_tier_honesty(self) -> None:
         content = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8").lower()
@@ -125,6 +128,13 @@ class SkillPackageTests(unittest.TestCase):
             guide = PLATFORM_DOCS / relative_path
             self.assertTrue(guide.is_file(), f"Missing platform guide: {relative_path}")
 
+        android = (PLATFORM_DOCS / "android.md").read_text(encoding="utf-8").lower()
+        catalog = (PLATFORM_DOCS / "android-library-catalog.md").read_text(encoding="utf-8").lower()
+        for policy in ("existing project", "new project", "minsdk", "build.version.sdk_int", "runtime", "opengl es"):
+            self.assertIn(policy, android)
+        for candidate in ("blurview", "haze", "miuix-blur", "rive", "realtimeblurview", "version-4.0.0", "2.1.0", "api 33+"):
+            self.assertIn(candidate, catalog)
+        self.assertIn("refraction", catalog)
         matrix = (PLATFORM_DOCS / "capability-matrix.md").read_text(encoding="utf-8").lower()
         for column in ("backdrop access", "refraction route", "shader", "masks and motion", "accessibility integration", "version / hardware gate"):
             self.assertIn(column, matrix)

@@ -92,6 +92,10 @@ First detect:
 
 Then select the best fit. Possible implementation families include native compositor/material APIs, GPU shaders, custom drawing, scene/render pipelines, canvas or DOM effects, and carefully layered native components. Technologies such as WebGL/GLSL, WebGPU, platform shaders, Skia-like renderers, game-engine materials, or native visual-effect APIs are examples—not mandatory dependencies.
 
+### Android compatibility contract
+
+When the target is native Android, follow `docs/platform-adaptation/android.md` and its [dependency catalog](docs/platform-adaptation/android-library-catalog.md) before selecting APIs or libraries. Inspect the effective app-variant `minSdk` and actual device `Build.VERSION.SDK_INT` separately; `compileSdk` and `targetSdk` do not substitute for either. For an existing project, preserve minSdk and implement runtime-gated branches rather than silently raising it. On API 33+, AGSL `RuntimeShader` is available, but still requires an explicitly supplied source texture for backdrop displacement. Below API 33, compare a compatible dependency (for example BlurView for View/XML or Haze for an existing Compose app), an app-owned OpenGL ES path when the texture is owned, and a stable L0/L1 fallback. Verify library minSdk, dependency/toolchain compatibility, source-capture limits, and the real rendering tier. For a new Android project with no minSdk supplied, explain the API-33 trade-off and ask the user before setting the baseline. Follow the user's stated minSdk exactly.
+
 Use the most capable reliable option that fits the target environment. Keep platform-specific code behind clear adapters or modules when a shared design specification can be reused. Do not build a lowest-common-denominator abstraction that prevents high-quality platform-native rendering.
 
 When the platform cannot provide true backdrop sampling, refraction, or dynamic lighting, explain the limitation and implement the strongest honest fallback. Never silently describe a blur-only approximation as physically refractive glass.
