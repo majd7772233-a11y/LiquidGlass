@@ -232,8 +232,14 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
-        if (framebufferReady) GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        if (framebufferReady) {
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        } else {
+            GLES20.glEnable(GLES20.GL_BLEND);
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        }
         drawGlass();
+        if (!framebufferReady) GLES20.glDisable(GLES20.GL_BLEND);
 
         if (!loggedReady) {
             loggedReady = true;

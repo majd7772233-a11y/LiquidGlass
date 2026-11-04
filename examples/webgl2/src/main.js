@@ -24,7 +24,9 @@ const gl = canvas.getContext("webgl2", {
 if (!gl) {
   document.documentElement.classList.add("no-webgl");
   document.documentElement.dataset.renderer = "css-l1";
-  status.textContent = "CSS FALLBACK · L1 BLUR · NO REFRACTION";
+  const blurAvailable = window.CSS && CSS.supports("backdrop-filter", "blur(1px)");
+  document.documentElement.dataset.renderer = blurAvailable ? "css-l1" : "css-l0";
+  status.textContent = blurAvailable ? "CSS FALLBACK · L1 BLUR · NO REFRACTION" : "TRANSLUCENT FALLBACK · L0";
 } else {
   startRenderer(gl);
 }
@@ -213,7 +215,9 @@ function startRenderer(context) {
     console.error(error);
     document.documentElement.classList.add("no-webgl");
     document.documentElement.dataset.renderer = "css-l1";
-    status.textContent = "CSS FALLBACK · L1 BLUR · REFRACTION UNAVAILABLE";
+    const blurAvailable = window.CSS && CSS.supports("backdrop-filter", "blur(1px)");
+    document.documentElement.dataset.renderer = blurAvailable ? "css-l1" : "css-l0";
+    status.textContent = blurAvailable ? "CSS FALLBACK · L1 BLUR · REFRACTION UNAVAILABLE" : "TRANSLUCENT FALLBACK · L0";
     return;
   }
 
@@ -325,8 +329,9 @@ function startRenderer(context) {
     event.preventDefault();
     cancelAnimationFrame(frameId);
     document.documentElement.classList.add("no-webgl");
-    document.documentElement.dataset.renderer = "css-l1";
-    status.textContent = "CONTEXT LOST · CSS L1 FALLBACK";
+    const blurAvailable = window.CSS && CSS.supports("backdrop-filter", "blur(1px)");
+    document.documentElement.dataset.renderer = blurAvailable ? "css-l1" : "css-l0";
+    status.textContent = blurAvailable ? "CONTEXT LOST · CSS L1 FALLBACK" : "CONTEXT LOST · L0 FALLBACK";
   });
 
   window.addEventListener("pointermove", (event) => {
