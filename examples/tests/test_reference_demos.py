@@ -78,8 +78,11 @@ class ReferenceDemoTests(unittest.TestCase):
         workflow = (ROOT / ".github" / "workflows" / "reference-demos.yml").read_text(encoding="utf-8")
         self.assertIn("webgl2-desktop.png", web_test)
         self.assertIn("webgl2-mobile.png", web_test)
-        self.assertIn("GL_READY tier=L3", workflow)
-        self.assertIn("adb shell screencap", workflow)
+        verify_script = (ANDROID / "scripts" / "verify-emulator.sh").read_text(encoding="utf-8")
+        self.assertIn("script: bash examples/android-gles/scripts/verify-emulator.sh", workflow)
+        self.assertIn("GL_READY tier=L3", verify_script)
+        self.assertIn("adb shell screencap", verify_script)
+        self.assertIn("uiautomator dump", verify_script)
         self.assertIn("upload-artifact@v4", workflow)
 
 
