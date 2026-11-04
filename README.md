@@ -8,7 +8,10 @@ This is not a synonym for ordinary glassmorphism. The target combines background
 
 - [GPT.md](GPT.md) — instructions for AI coding agents working in this repository.
 - [ROADMAP.md](ROADMAP.md) — phased delivery plan, dependencies, and completion criteria.
-- [examples/README.md](examples/README.md) — catalog of the visual reference images.
+- [Visual specification](docs/visual-specification.md) — platform-neutral material requirements.
+- [Interaction and motion](docs/interaction-and-motion.md) — shape transitions and interaction behavior.
+- [Reference matrix](docs/reference-matrix.md) — maps reference assets to review criteria.
+- [Examples catalog](examples/README.md) — visual reference image catalog.
 
 ## Working principle
 

@@ -2,7 +2,7 @@
 
 These files are visual references for the LiquidGlass material and interaction language. They are not implementation samples and do not prescribe a particular framework.
 
-## Inspected references
+## Inspected still-image references
 
 | File | What it visibly demonstrates | Useful review dimensions |
 |---|---|---|
@@ -10,6 +10,10 @@ These files are visual references for the LiquidGlass material and interaction l
 | [liquid-glass-interface-storyboard.png](references/storyboards/liquid-glass-interface-storyboard.png) | A contact sheet of interface states over photographic backgrounds | Background transmission, changing content behind glass, placement and state variation |
 | [refractive-media-playback-controls.png](references/media/refractive-media-playback-controls.png) | Circular media buttons over a bright floral/sky background, with visible colored optical edges | Backdrop visibility, refraction cues, edge color, control depth |
 | [organic-iridescent-liquid-glass-form.png](references/material/organic-iridescent-liquid-glass-form.png) | A large continuous organic form with soft pearlescent color and luminous edges | Organic silhouette, continuity, depth, iridescence, highlight gradients |
+
+## Motion reference analyzed for Phase 1
+
+The user-provided clip Liquid.mp4 was inspected locally to identify connected navigation surfaces, a growing/reconnecting search-like lobe, background-dependent optical response, and continuous shape changes. The video is not copied into this repository because its publication/provenance and permission for public re-hosting have not been established. The observations and approximate sequence are documented in [the reference matrix](../docs/reference-matrix.md).
 
 ## Additional references awaiting classification
 
@@ -24,7 +28,7 @@ Inspect and reclassify these files before relying on them as evidence for a spec
 
 ## Usage rules
 
-- Compare implementations against the actual images, not just this written summary.
+- Compare implementations against the actual images and the written specification.
 - Use the image most relevant to the feature under review; do not expect every example to show every property.
-- Preserve the original assets unless provenance, relevance, or licensing is checked.
+- Preserve source assets unless provenance, relevance, and licensing have been checked.
 - Do not describe an effect as true refraction when the implementation only blurs or tints the background.

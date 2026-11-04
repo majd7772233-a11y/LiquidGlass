@@ -15,19 +15,34 @@ The repository is intended to deliver:
 
 Do not claim that the Skill, plugin, or complete cross-platform support already exists until the corresponding roadmap phases have actually been delivered.
 
-## 2. Source of truth and working order
+## 2. Phase execution and completion contract
+
+When the user asks to start or complete a roadmap phase, treat the phase as a complete delivery unit—not as permission to do only its first task.
+
+1. Read the entire relevant phase, its deliverables, acceptance criteria, and any dependent repository instructions before editing.
+2. Complete every in-scope task and deliverable in the same execution cycle. Do not stop after creating a partial draft, a skeleton, or only the first requested file.
+3. Resolve problems independently when they are within the granted scope. Diagnose failed approaches, use another supported tool or workflow, verify the result, and continue. Do not merely report a solvable error or ask the user to perform routine repair work.
+4. Do not skip a requirement silently. If a requirement is genuinely impossible after reasonable alternatives are exhausted, complete every other in-scope item, record the exact remaining blocker and its impact, and do not mark the phase complete.
+5. Update the roadmap and related documentation to reflect actual work. Check off work only after its acceptance criteria have been verified.
+6. Verify the published repository state—not merely the local draft or a successful write response.
+7. Send one final phase report only after the phase is complete and verified. Do not send a premature completion report while deliverables or acceptance checks remain.
+
+A phase is complete only when its required deliverables exist, agree with one another, satisfy the acceptance criteria, and have been checked in the target repository. A polished explanation is not a substitute for finished work.
+
+## 3. Source of truth and working order
 
 Before every substantial task:
 
 1. Read this file and the relevant sections of ROADMAP.md.
 2. Inspect the repository tree and the latest commit. Do not assume a previously remembered file layout is still current.
 3. Read the relevant example catalog in examples/README.md and inspect the actual reference images when available.
-4. Inspect the target project's source, framework, language, build system, deployment target, rendering APIs, and existing design conventions before proposing an implementation.
-5. Identify constraints and state the intended approach before making broad or destructive changes.
+4. Read the specification documents under docs/ before implementing or reviewing material and motion behavior.
+5. Inspect the target project's source, framework, language, build system, deployment target, rendering APIs, and existing design conventions before proposing an implementation.
+6. Identify constraints and state the intended approach before making broad or destructive changes.
 
 Treat the visual reference assets as the target for appearance, not as implementation instructions. Treat the target project's existing architecture as the source of truth for integration. Avoid asking the user to repeat information already present in repository files or conversation context.
 
-## 3. Visual target: what Liquid Glass means here
+## 4. Visual target: what Liquid Glass means here
 
 A convincing result may combine the following, as appropriate to the reference and platform:
 
@@ -40,21 +55,22 @@ A convincing result may combine the following, as appropriate to the reference a
 - **Fluid form:** blobs, pills, controls, and connected surfaces can deform, merge, split, and settle with continuous, natural transitions.
 - **Interaction:** controls should feel like physical surfaces responding to touch, pointer movement, focus, drag, press, and release—not static stickers placed over a blurred background.
 
-A solution that uses only backdrop blur, transparency, border, and shadow is a **basic fallback**, not full Liquid Glass parity. Label it honestly.
+The detailed platform-neutral contract is in:
+- docs/visual-specification.md
+- docs/interaction-and-motion.md
+- docs/reference-matrix.md
 
-## 4. Reference asset interpretation
+A solution that uses only backdrop blur, transparency, border, and shadow is a **basic fallback**, not full Liquid Glass parity. Label it honestly using the capability tiers in the visual specification.
 
-The curated images live under examples/references/. Their purpose is to establish visual characteristics and use cases:
+## 5. Reference asset interpretation
 
-- **controls/translucent-controls-and-sliders.png:** floating glass controls, pill-shaped surfaces, sliders, and simple action affordances.
-- **storyboards/liquid-glass-interface-storyboard.png:** a sequence/contact sheet showing glass navigation and search-like controls over changing photographic backgrounds.
-- **media/refractive-media-playback-controls.png:** translucent circular media controls with visible background transmission and colored edge/reflection behavior.
-- **material/organic-iridescent-liquid-glass-form.png:** a large continuous organic surface with soft depth, luminous edges, and pearlescent color transitions.
-- **unclassified/additional-concept-reference-01.png** through **04.png:** retained source images that still need visual inspection and classification. Do not infer their contents from their former numeric filenames.
+The curated still images live under examples/references/. The catalog at examples/README.md explains each inspected image and lists unclassified assets that must not be used as evidence until reviewed.
 
-These images are examples, not exhaustive specifications. Do not force every component to look identical. Extract reusable material properties and interaction rules, then adapt their expression to the component's role and platform conventions.
+The supplied motion reference was inspected during Phase 1. Its observable motion behaviors and approximate sequence are documented in docs/reference-matrix.md. Do not assume the original video is included in the repository.
 
-## 5. Platform- and language-neutral engineering
+Treat all references as evidence of visible behavior, not proof of the original rendering implementation or physical parameters. Do not invent implementation details from a screenshot.
+
+## 6. Platform- and language-neutral engineering
 
 Never assume that the target is a web page, CSS, Android, iOS, or a particular language.
 
@@ -71,7 +87,7 @@ Use the most capable reliable option that fits the target environment. Keep plat
 
 When the platform cannot provide true backdrop sampling, refraction, or dynamic lighting, explain the limitation and implement the strongest honest fallback. Never silently describe a blur-only approximation as physically refractive glass.
 
-## 6. Rendering and motion guidance
+## 7. Rendering and motion guidance
 
 Choose techniques based on measured needs and platform capability. Potential building blocks include:
 
@@ -88,7 +104,7 @@ These are candidate techniques, not a fixed stack. Avoid expensive multi-pass re
 
 Motion should have coherent timing, damping, and continuity. Support reduced-motion preferences and provide a stable non-animated state. Interactive movement must not block input or make controls difficult to use.
 
-## 7. Integration rules
+## 8. Integration rules
 
 - Preserve the host project's architecture, language, conventions, and existing visual system unless a justified change is necessary.
 - Prefer small, composable material primitives and reusable behavior over duplicated one-off effects.
@@ -98,7 +114,7 @@ Motion should have coherent timing, damping, and continuity. Support reduced-mot
 - Do not overwrite user work or remove existing assets without verifying their role.
 - Keep example assets organized and referenced from the example catalog.
 
-## 8. Accessibility and resilience
+## 9. Accessibility and resilience
 
 A visually rich surface is still a user interface. Every delivered implementation must consider:
 
@@ -112,7 +128,7 @@ A visually rich surface is still a user interface. Every delivered implementatio
 
 Do not rely on color, refraction, blur, or motion alone to communicate state.
 
-## 9. Performance and quality
+## 10. Performance and quality
 
 Measure before optimizing and test on the actual target class of device when possible. Consider frame pacing, GPU/CPU cost, memory and render-target use, overdraw, battery/thermal impact, startup cost, and behavior under scrolling or multiple simultaneous surfaces.
 
@@ -120,7 +136,7 @@ Use graceful quality tiers when hardware varies. Avoid unbounded shader loops, u
 
 A change is not complete merely because it compiles. Run the relevant formatter, static checks, tests, build, and runtime/visual review available in the target project. Record unavailable tests and environmental blockers honestly.
 
-## 10. Visual validation protocol
+## 11. Visual validation protocol
 
 For any substantial visual implementation:
 
@@ -133,7 +149,7 @@ For any substantial visual implementation:
 
 Do not claim pixel-perfect or reference-matched output without evidence. Prefer side-by-side captures and reproducible test instructions.
 
-## 11. Documentation and delivery
+## 12. Documentation and delivery
 
 For each feature or platform adapter, document:
 - target platform and minimum requirements;
@@ -145,7 +161,7 @@ For each feature or platform adapter, document:
 
 Keep ROADMAP.md accurate. Mark a phase or task complete only when its acceptance criteria are met. Split large work into reviewable changes, preserve a clean history, and report changed paths, tests, results, and remaining gaps.
 
-## 12. Definition of done
+## 13. Definition of done
 
 A task is done only when all applicable conditions are met:
 

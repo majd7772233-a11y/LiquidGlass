@@ -10,12 +10,16 @@ This roadmap sequences the work from a visual reference collection into a reusab
 
 **Non-goal:** ship one universal rendering engine or force every target to use the same language, framework, shader system, or visual fallback.
 
+## Phase execution rule
+
+A requested roadmap phase is one complete delivery unit. The agent must finish every in-scope task and deliverable, resolve solvable problems using supported alternatives, update the roadmap only after acceptance checks pass, verify the published repository state, and then send one final report. It must not stop after partial progress or send a premature completion report. Genuine external blockers must be stated precisely; they must never be used to label unfinished work complete.
+
 ## Status overview
 
 | Phase | Status | Outcome |
 |---|---|---|
 | 0. Repository and reference baseline | In progress | Project instructions, roadmap, and organized visual references |
-| 1. Visual specification | Not started | A testable, platform-neutral material and motion specification |
+| 1. Visual specification | Complete | Testable, platform-neutral material, interaction, motion, and reference criteria |
 | 2. Core coding Skill | Not started | Installable Skill with reliable discovery and implementation workflow |
 | 3. Platform adaptation guidance | Not started | Technique selection and adapter guidance for major platform families |
 | 4. Liquid Glass Studio workflow | Not started | Dedicated assistant/plugin capabilities and tool contracts |
@@ -43,25 +47,30 @@ Acceptance:
 
 ## Phase 1 — Visual and interaction specification
 
+<badge>Complete</badge>
+
 **Goal:** turn the reference material into a framework-independent specification that can guide implementation and review.
 
 Tasks:
-- Define the material model: transmission, refraction, distortion, depth, edge response, specular highlights, and restrained spectral effects.
-- Define shape families: pills, rounded controls, circular surfaces, connected/organic forms, and merged liquid surfaces.
-- Define interaction states and transitions: idle, hover/focus, press, drag, release, merge, split, and settle.
-- Separate essential visual properties from optional embellishments.
-- Define a visual vocabulary and a reference-to-criterion matrix so reviewers can identify which image demonstrates each property.
-- Specify fallback levels, clearly distinguishing true backdrop refraction from blur/tint-only approximations.
+- [x] Define the material model: transmission, refraction, distortion, depth, edge response, specular highlights, and restrained spectral effects.
+- [x] Define shape families: pills, rounded controls, circular surfaces, connected/organic forms, and merged liquid surfaces.
+- [x] Define interaction states and transitions: idle, hover/focus, press, drag, release, merge, split, and settle.
+- [x] Separate essential visual properties from optional embellishments.
+- [x] Define a visual vocabulary and a reference-to-criterion matrix so reviewers can identify which image demonstrates each property.
+- [x] Specify fallback levels, clearly distinguishing true backdrop refraction from blur/tint-only approximations.
 
 Deliverables:
-- docs/visual-specification.md
-- docs/interaction-and-motion.md
-- docs/reference-matrix.md
+- [x] [docs/visual-specification.md](docs/visual-specification.md)
+- [x] [docs/interaction-and-motion.md](docs/interaction-and-motion.md)
+- [x] [docs/reference-matrix.md](docs/reference-matrix.md)
+- [x] [docs/README.md](docs/README.md) — specification index
 
 Acceptance:
-- Each core visual property has a written description and review criterion.
-- The spec can be applied without choosing a programming language or framework.
-- The basic-glass fallback is explicitly distinguished from the target material.
+- [x] Each core visual property has a written description and review criterion.
+- [x] The spec can be applied without choosing a programming language or framework.
+- [x] The basic-glass fallback is explicitly distinguished from the target material.
+- [x] Still-image and motion references are mapped to the behaviors they can legitimately support.
+- [x] The specification distinguishes observed evidence from design recommendations and unverified assumptions.
 
 ## Phase 2 — Core coding Skill
 
