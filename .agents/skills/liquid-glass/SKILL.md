@@ -60,7 +60,7 @@ Load only the references needed for the current task:
 - [Motion, accessibility, and performance](references/motion-accessibility-performance.md) — behavior and resilience.
 - [Validation and reporting](references/validation-and-reporting.md) — verification and final report format.
 - [Platform adaptation index](../../../docs/platform-adaptation/README.md) and [capability matrix](../../../docs/platform-adaptation/capability-matrix.md) — use when this repository is available to select a verified platform-family route.
-- [Platform worked workflows](examples/) — Apple, Windows, Qt, Flutter, Unity, Unreal, and constrained target decision/validation fixtures.
+- [Platform worked workflows](examples/README.md) — Apple, Windows, Qt, Flutter, Unity, Unreal, and constrained target decision/validation fixtures.
 - [Implementation workflow](references/implementation-workflow.md) — integration sequence, failure handling, and change hygiene.
 - [Implementation brief template](assets/implementation-brief.template.md) and [visual review template](assets/visual-review.template.md) — reusable planning and evidence records.
 - [Web DOM worked workflow](examples/web-dom/WORKFLOW.md) and [Android Java/XML worked workflow](examples/android-java/WORKFLOW.md) — examples of platform-aware reasoning, not universal prescriptions.
