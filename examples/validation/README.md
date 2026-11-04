@@ -55,7 +55,7 @@ Android CI exercises the native app at its default emulator configuration, a 720
 
 ### Web
 
-The Playwright check verifies accessible names/roles, the range label, pressed state, keyboard tab order, a visible focus outline, 44 CSS-pixel action targets, a 40-pixel slider hit region, reduced-motion state continuity, increased-contrast styling, reduced-transparency styling, and forced-colors behavior.
+The Playwright check verifies accessible names/roles, the range label, pressed state, keyboard tab order, a visible focus outline, 44 CSS-pixel action targets, a 40-pixel slider hit region, reduced-motion state continuity, increased-contrast styling, reduced-transparency styling, forced-colors behavior, and the computed CSS filter state for L0 (no blur) versus L1 (backdrop blur).
 
 The demo responds to:
 
@@ -74,7 +74,7 @@ The emulator script validates the TalkBack-facing accessibility node names and v
 
 ### Browser
 
-The browser report contains rolling frame-interval samples, average/P95/max interval, intervals above 16.7 ms, CPU-side WebGL command-submission time, draw calls per frame, canvas pixel ratio, and the estimated RGBA8 scene-texture allocation.
+The browser report contains a reset, isolated 3-second single-page frame-pacing window with average/P95/max interval, intervals above 16.7 ms, CPU-side WebGL command-submission time, draw calls per frame, canvas pixel ratio, and the estimated RGBA8 scene-texture allocation. The other viewport capture pages are opened only after the isolated timing window, so their screenshot load does not contaminate the desktop sample.
 
 - CPU submission time measures JavaScript/driver command submission only.
 - Estimated scene-texture memory is `width × height × 4` bytes for one RGBA8 off-screen texture; it excludes browser compositor surfaces, driver allocations, and other process memory.

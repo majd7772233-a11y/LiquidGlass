@@ -25,7 +25,7 @@ class PhaseSixValidationTests(unittest.TestCase):
         source = (WEB / "src" / "main.js").read_text(encoding="utf-8")
         styles = (WEB / "styles.css").read_text(encoding="utf-8")
         smoke = (WEB / "tests" / "smoke.mjs").read_text(encoding="utf-8")
-        for token in ("uBackgroundMode", "detailed", "window.__liquidGlassDiagnostics",
+        for token in ("uBackgroundMode", "detailed", "window.__liquidGlassDiagnostics", "window.__liquidGlassResetMetrics",
                       "averageFrameMs", "p95CpuSubmitMs", "estimatedSceneTextureBytes",
                       "document.hidden", "cancelAnimationFrame"):
             self.assertIn(token, source)
@@ -50,6 +50,7 @@ class PhaseSixValidationTests(unittest.TestCase):
         self.assertIn("isReducedMotionEnabled", activity)
         self.assertIn("dp(48)", activity)
         self.assertIn("extra_surfaces", activity)
+        self.assertIn('morphButton.setContentDescription("Connect the liquid lens")', activity)
         self.assertNotIn('android:screenOrientation="portrait"', manifest)
         for token in ("PERF window_frames", "p95_frame_ms", "jank_gt_16_7",
                       "cpu_submit_p95_ms", "fbo_texture_bytes", "full_screen_passes=2", "surfaces=%d", "gpu_time_ms=unavailable",

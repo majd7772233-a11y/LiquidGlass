@@ -167,9 +167,10 @@ public final class MainActivity extends Activity {
         playButton = button("Pause preview");
         playButton.setContentDescription("Pause optical preview");
         morphButton = button("Connect lens");
+        morphButton.setContentDescription("Connect the liquid lens");
         LinearLayout.LayoutParams firstButton = new LinearLayout.LayoutParams(0, dp(48), 1);
         firstButton.rightMargin = dp(7);
-        LinearLayout.LayoutParams secondButton = new LinearLayout.LayoutParams(0, dp(46), 1);
+        LinearLayout.LayoutParams secondButton = new LinearLayout.LayoutParams(0, dp(48), 1);
         secondButton.leftMargin = dp(7);
         controls.addView(playButton, firstButton);
         controls.addView(morphButton, secondButton);

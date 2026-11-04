@@ -264,6 +264,19 @@ html.no-webgl .glass-panel {
   backdrop-filter: blur(18px) saturate(1.25);
   -webkit-backdrop-filter: blur(18px) saturate(1.25);
 }
+html.no-webgl body {
+  background-color: #08101f;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(151, 202, 255, .12) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(151, 202, 255, .12) 0 1px, transparent 1px 22px),
+    radial-gradient(ellipse at 18% 22%, rgba(37, 105, 156, .45), transparent 42%),
+    radial-gradient(ellipse at 82% 78%, rgba(117, 63, 149, .36), transparent 45%),
+    #08101f;
+}
+html.no-webgl[data-renderer="css-l0"] .glass-panel {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 html.no-webgl #scene { display: none; }
 @media (max-width: 600px) {
   .topbar, .page-footer { width: calc(100% - 36px); }

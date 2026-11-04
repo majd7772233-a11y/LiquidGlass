@@ -236,6 +236,12 @@ function startRenderer(context) {
     document.documentElement.dataset.renderer = "webgl2-l2-l3";
     status.textContent = "WEBGL2 · OWNED SCENE TEXTURE · L2 / L3";
     status.title = "The lens samples and displaces the application-owned background texture.";
+    window.__liquidGlassResetMetrics = () => {
+      frameSamples.length = 0;
+      cpuSubmitSamples.length = 0;
+      lastMetricFrame = 0;
+      lastFrame = performance.now();
+    };
     window.__liquidGlassDiagnostics = () => {
       const average = values => values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
       const percentile = (values, ratio) => {

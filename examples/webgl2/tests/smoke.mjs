@@ -78,6 +78,17 @@ try {
   assert.notEqual(focusStyle.outlineStyle, "none");
   assert.ok(focusStyle.outlineWidth >= 2, "Keyboard focus must have a visible outline.");
 
+  // Isolate the frame-pacing window before opening the other capture pages.
+  await desktop.evaluate(() => window.__liquidGlassResetMetrics());
+  await desktop.waitForTimeout(3000);
+  const desktopMetrics = await desktop.evaluate(() => window.__liquidGlassDiagnostics());
+  assert.ok(desktopMetrics.frameSamples > 0, "Frame pacing samples must be collected.");
+  assert.ok(desktopMetrics.averageFrameMs > 0);
+  assert.ok(desktopMetrics.averageCpuSubmitMs >= 0);
+  assert.ok(desktopMetrics.estimatedSceneTextureBytes > 0);
+  assert.equal(desktopMetrics.gpuTimeMs, null,
+    "GPU time is deliberately not inferred from JavaScript command-submission timing.");
+
   const matrix = [
     { name: "desktop-midnight", width: 1440, height: 960, dpr: 1, scene: "midnight" },
     { name: "tablet-bright", width: 768, height: 1024, dpr: 1, scene: "bright" },
@@ -120,6 +131,8 @@ try {
   await fallbackL1.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
   assert.equal(await fallbackL1.locator("html").getAttribute("data-renderer"), "css-l1");
   assert.match(await fallbackL1.locator("#renderer-status").textContent(), /L1 BLUR/);
+  const l1Filter = await fallbackL1.locator("#glass-panel").evaluate(element => getComputedStyle(element).backdropFilter);
+  assert.match(l1Filter, /blur\(18px\)/);
   await fallbackL1.screenshot({ path: join(artifactDir, "webgl2-fallback-l1.png"), fullPage: true });
 
   const fallbackL0 = await browser.newPage({ viewport: { width: 960, height: 720 } });
@@ -138,6 +151,8 @@ try {
   await fallbackL0.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
   assert.equal(await fallbackL0.locator("html").getAttribute("data-renderer"), "css-l0");
   assert.match(await fallbackL0.locator("#renderer-status").textContent(), /L0/);
+  const l0Filter = await fallbackL0.locator("#glass-panel").evaluate(element => getComputedStyle(element).backdropFilter);
+  assert.equal(l0Filter, "none", "L0 must not accidentally keep the browser's backdrop blur effect.");
   await fallbackL0.screenshot({ path: join(artifactDir, "webgl2-fallback-l0.png"), fullPage: true });
 
   const accessibility = await browser.newPage({ viewport: { width: 1024, height: 768 } });
@@ -176,15 +191,6 @@ try {
   await accessibility.screenshot({ path: join(artifactDir, "webgl2-accessibility-fallback.png"), fullPage: true });
   await fallbackL1.close();
   await fallbackL0.close();
-
-  await desktop.waitForTimeout(1200);
-  const desktopMetrics = await desktop.evaluate(() => window.__liquidGlassDiagnostics());
-  assert.ok(desktopMetrics.frameSamples > 0, "Frame pacing samples must be collected.");
-  assert.ok(desktopMetrics.averageFrameMs > 0);
-  assert.ok(desktopMetrics.averageCpuSubmitMs >= 0);
-  assert.ok(desktopMetrics.estimatedSceneTextureBytes > 0);
-  assert.equal(desktopMetrics.gpuTimeMs, null,
-    "GPU time is deliberately not inferred from JavaScript command-submission timing.");
 
   if (pageErrors.length) throw new Error("Browser errors: " + pageErrors.join(" | "));
   const report = {
