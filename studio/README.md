@@ -35,6 +35,19 @@ python studio/scripts/build_plugin_package.py --output /tmp/liquid-glass-studio.
 
 The archive is a single plugin at its root, including the hidden `.app.json` binding. It is for private account creation, not public-directory submission. Public upload rules differ and exclude app bindings.
 
+## Current private plugin release
+
+The private personal plugin has been created and its source/package inventory verified:
+
+- Display name: **Liquid Glass Studio**
+- Package version: `0.1.0`
+- Scope: private personal plugin
+- Current release ID: `pluginrel_6aeb56991a6c8191acff6f509dc51779`
+- Connected app: the existing GitHub connector declared in `package-source/.app.json`
+- Packaged files: 28, including the Studio Skill, shared cross-platform specifications, Android compatibility catalog, workflow examples, and tool contracts.
+
+The account metadata and package are verified. The actual `@Liquid Glass Studio` invocation in the live ChatGPT UI has not been observed by the available tools; follow the private plugin link returned in the creation report to open/activate it if the host prompts for that step. Phase 4 remains In progress until that host-side invocation is confirmed.
+
 ## Runtime setup
 
 The plugin requires the user's existing GitHub connector to be available and authorized for the target repository. Its permissions remain governed by ChatGPT's GitHub connection and permission settings. Studio must not assume access to local files, private repositories not granted to GitHub, Actions logs without permission, or a local emulator/device.
