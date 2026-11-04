@@ -95,7 +95,7 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
             " vec3 glass=mix(original,refracted,uHasScene>0.5?0.91:0.0);\n" +
             " glass=mix(glass,glass*vec3(0.88,0.96,1.045)+vec3(0.018,0.026,0.045),0.13);\n" +
             " glass+=vec3(0.52,0.79,1.0)*rim*0.27+vec3(0.86,0.95,1.0)*spec+vec3(0.44,0.73,0.92)*highlight*0.06;\n" +
-            " gl_FragColor=vec4(mix(original,glass,mask),1.0);\n" +
+            " if(uHasScene>0.5) gl_FragColor=vec4(mix(original,glass,mask),1.0); else gl_FragColor=vec4(glass,mask);\n" +
             "}";
 
     private final FloatBuffer quad;
@@ -113,6 +113,7 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
     private int surfaceWidth = 1;
     private int surfaceHeight = 1;
     private boolean framebufferReady;
+    private volatile String statusText = "GL CONTEXT · INITIALIZING";
     private boolean loggedReady;
     private float morph;
     private long startNanos;
@@ -130,6 +131,8 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
         });
         quad.position(0);
     }
+
+    String getStatus() { return statusText; }
 
     void setLensRect(float x, float y, float width, float height) {
         lensRect = new float[]{x, y, width, height};
@@ -161,10 +164,12 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
             glassProgram = linkProgram(VERTEX_SHADER, GLASS_SHADER);
             startNanos = System.nanoTime();
             lastNanos = startNanos;
+            statusText = "GLSL ES 1.00 · SHADERS READY";
             Log.i(TAG, "GL_CONTEXT_READY version=OpenGL_ES_2.0");
         } catch (RuntimeException error) {
             backgroundProgram = 0;
             glassProgram = 0;
+            statusText = "GL SHADER FAILURE · L0";
             Log.e(TAG, "GL_SHADER_FAILURE " + error.getMessage());
         }
     }
@@ -201,8 +206,10 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
         if (framebufferReady) {
+            statusText = "APP-OWNED FBO · L2 / L3";
             Log.i(TAG, "SCENE_FBO_READY width=" + surfaceWidth + " height=" + surfaceHeight);
         } else {
+            statusText = "FRAMEBUFFER FALLBACK · L0";
             Log.w(TAG, "GL_FALLBACK tier=L0 framebuffer_status=0x" + Integer.toHexString(result));
         }
     }

@@ -6,6 +6,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -23,8 +25,17 @@ public final class MainActivity extends Activity {
     private TextView status;
     private Button playButton;
     private Button morphButton;
-    private boolean playing = false;
+    private boolean playing = true;
     private boolean connected = false;
+    private final Handler statusHandler = new Handler(Looper.getMainLooper());
+    private final Runnable statusPoll = new Runnable() {
+        @Override public void run() {
+            if (status != null && renderer != null) {
+                status.setText(renderer.getStatus());
+                if (!isFinishing()) statusHandler.postDelayed(this, 250);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +49,7 @@ public final class MainActivity extends Activity {
         root.setBackgroundColor(Color.rgb(8, 13, 29));
 
         renderer = new GlassRenderer();
+        renderer.setPlaying(playing);
         glView = new GLSurfaceView(this);
         glView.setEGLContextClientVersion(2);
         glView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
@@ -130,7 +142,8 @@ public final class MainActivity extends Activity {
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(52));
         controlsParams.topMargin = dp(10);
 
-        playButton = button("Play preview");
+        playButton = button("Pause preview");
+        playButton.setContentDescription("Pause optical preview");
         morphButton = button("Connect lens");
         LinearLayout.LayoutParams firstButton = new LinearLayout.LayoutParams(0, dp(46), 1);
         firstButton.rightMargin = dp(7);
@@ -244,14 +257,17 @@ public final class MainActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         if (glView != null) glView.onResume();
+        statusHandler.post(statusPoll);
     }
 
     @Override protected void onPause() {
+        statusHandler.removeCallbacks(statusPoll);
         if (glView != null) glView.onPause();
         super.onPause();
     }
 
     @Override protected void onDestroy() {
+        statusHandler.removeCallbacks(statusPoll);
         if (renderer != null) renderer.release();
         super.onDestroy();
     }
