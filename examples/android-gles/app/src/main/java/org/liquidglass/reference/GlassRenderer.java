@@ -44,7 +44,7 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
             " color += exp(-dot(g1,g1)*5.2)*vec3(0.12,0.32,0.52);\n" +
             " vec2 g2 = p-vec2(0.48,-0.31+0.045*cos(t*0.25));\n" +
             " color += exp(-dot(g2,g2)*7.0)*vec3(0.34,0.14,0.48);\n" +
-            " float vignette = smoothstep(1.18,0.12,length(p*vec2(0.78,1.1)));\n" +
+            " float vignette = 1.0-smoothstep(0.12,1.18,length(p*vec2(0.78,1.1)));\n" +
             " color *= 0.72+0.28*vignette; gl_FragColor=vec4(color,1.0);\n" +
             "}";
 
@@ -232,7 +232,7 @@ final class GlassRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        if (framebufferReady) GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         drawGlass();
 
         if (!loggedReady) {

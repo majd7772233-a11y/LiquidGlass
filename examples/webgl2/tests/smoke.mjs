@@ -42,7 +42,10 @@ try {
   const play = desktop.locator("#play-toggle");
   await play.click();
   if (await play.getAttribute("aria-pressed") !== "true") throw new Error("The play/pause control did not update its semantic state.");
-  await desktop.locator("#progress").fill("72");
+  await desktop.locator("#progress").evaluate(element => {
+    element.value = "72";
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  });
   if (await desktop.locator("#progress").inputValue() !== "72") throw new Error("The timeline slider did not accept input.");
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });

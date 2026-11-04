@@ -60,7 +60,7 @@ function startRenderer(context) {
     vec3 blue = vec3(0.08, 0.18, 0.34);
     vec3 violet = vec3(0.24, 0.13, 0.34);
     vec3 color = mix(deep, blue, smoothstep(-0.55, 0.58, p.y));
-    color = mix(color, violet, smoothstep(0.72, -0.55, p.x + 0.35 * p.y) * 0.43);
+    color = mix(color, violet, (1.0 - smoothstep(-0.55, 0.72, p.x + 0.35 * p.y)) * 0.43);
 
     vec2 gridUv = uv * vec2(19.0, 13.0);
     vec2 gridCell = abs(fract(gridUv) - 0.5);
@@ -87,7 +87,7 @@ function startRenderer(context) {
     float glowB = exp(-dot(lightB, lightB) * 7.0);
     color += glowA * vec3(0.12, 0.32, 0.52) + glowB * vec3(0.34, 0.14, 0.48);
 
-    float vignette = smoothstep(1.18, 0.12, length(p * vec2(0.78, 1.1)));
+    float vignette = (1.0 - smoothstep(0.12, 1.18, length(p * vec2(0.78, 1.1))));
     color *= 0.72 + 0.28 * vignette;
     outColor = vec4(color, 1.0);
   }`;
