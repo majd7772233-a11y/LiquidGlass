@@ -46,7 +46,9 @@ The private personal plugin has been created and its source/package inventory ve
 - Connected app: the existing GitHub connector declared in `package-source/.app.json`
 - Packaged files: 28, including the Studio Skill, shared cross-platform specifications, Android compatibility catalog, workflow examples, and tool contracts.
 
-The account metadata and package are verified. The actual `@Liquid Glass Studio` invocation in the live ChatGPT UI has not been observed by the available tools; follow the private plugin link returned in the creation report to open/activate it if the host prompts for that step. Phase 4 remains In progress until that host-side invocation is confirmed.
+The actual `@Liquid Glass Studio` invocation has now been tested by the user in ChatGPT and confirmed to behave as intended. Phase 4 is therefore marked Complete in `ROADMAP.md`.
+
+[Open the private Liquid Glass Studio plugin](https://chatgpt.com/plugins/plugins_6aeb5696483c81919fbad78423d2767e). The user's successful host test is the confirmation; the connected GitHub tools independently verify the saved private release, package inventory, and GitHub binding.
 
 ## Runtime setup
 

@@ -66,6 +66,7 @@ Load only the references needed for the current task:
 - [Liquid Glass Studio twin and package](../../../studio/README.md) — the ChatGPT execution adapter and canonical shared-knowledge packaging workflow.
 - [Android dependency and renderer catalog](../../../docs/platform-adaptation/android-library-catalog.md) — third-party options, versions, and compatibility limits.
 - [Platform worked workflows](examples/README.md) — Apple, Windows, Qt, Flutter, Unity, Unreal, and constrained target decision/validation fixtures.
+- [Runnable WebGL2 implementation](../../../examples/webgl2/README.md) and [Android Java/GLES2 implementation](../../../examples/android-gles/README.md) — executable L2/L3 references, owned-backdrop rendering, semantic controls, and verified CI capture routes.
 - [Implementation workflow](references/implementation-workflow.md) — integration sequence, failure handling, and change hygiene.
 - [Implementation brief template](assets/implementation-brief.template.md) and [visual review template](assets/visual-review.template.md) — reusable planning and evidence records.
 - [Web DOM worked workflow](examples/web-dom/WORKFLOW.md) and [Android Java/XML worked workflow](examples/android-java/WORKFLOW.md) — examples of platform-aware reasoning, not universal prescriptions.

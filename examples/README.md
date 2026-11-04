@@ -47,4 +47,8 @@ These standalone examples are implementation evidence, distinct from the visual 
 
 The [reference-demo workflow](../.github/workflows/reference-demos.yml) runs a headless Chromium/WebGL2 test and captures desktop/mobile screenshots. It also builds the Android debug APK, launches it on an API 35 emulator, verifies the app-owned FBO path through the renderer diagnostic, activates the connected-lens control through Android's accessibility tree, and uploads an emulator capture.
 
-Artifacts are retained for 14 days per GitHub Actions run. These are reproducible CI/emulator captures, not proof of performance on every physical GPU. Real-device profiling, TalkBack review, and thermal/battery measurements remain in Phase 6.
+**Latest verified run:** [GitHub Actions 41872058940](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41872058940), commit `ec2ddd9ec23c46dc1329b28b939e25ac94f56364`, completed successfully for both target jobs. The separate [validation run 41872058961](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41872058961) passed all 8 Skill, 4 Studio, and 5 reference-demo contract tests.
+
+The WebGL2 artifact contains desktop/mobile Chromium screenshots. The Android artifact contains the debug APK, `GL_CONTEXT_READY` / `SCENE_FBO_READY` / `GL_READY tier=L3` log, Android accessibility hierarchy, and an L3 screenshot captured after the connected-lens button was activated. Artifacts are retained for 14 days per run.
+
+These are reproducible headless-browser/emulator captures, not proof of performance on every physical GPU. The scenes are procedural and optical highlights are approximations; neither sample claims pixel parity or physically complete optics. Real-device profiling, TalkBack review, and thermal/battery measurements remain in Phase 6.

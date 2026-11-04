@@ -22,8 +22,8 @@ A requested roadmap phase is one complete delivery unit. The agent must finish e
 | 1. Visual specification | Complete | Testable, platform-neutral material, interaction, motion, and reference criteria |
 | 2. Core coding Skill | Complete | Portable Codex Skill with project inspection, renderer selection, install guide, web and Android workflows, and package tests |
 | 3. Platform adaptation guidance | Complete | Backdrop/capability matrix, seven platform-family guides, nine worked workflow fixtures, and CI validation |
-| 4. Liquid Glass Studio workflow | In progress | ChatGPT execution twin, bound GitHub repository operations, portable package, and host availability verification |
-| 5. Reference implementations | Not started | Small, runnable examples demonstrating distinct material capabilities |
+| 4. Liquid Glass Studio workflow | Complete | Private ChatGPT execution twin, seven workflow contracts, shared knowledge, verified GitHub binding, and user-confirmed host invocation |
+| 5. Reference implementations | Complete | Runnable WebGL2 and Android Java/GLES2 L2/L3 demos with automated browser/emulator builds and captured evidence |
 | 6. Validation, accessibility, and performance | Not started | Reproducible visual and runtime quality gates |
 | 7. Packaging and release | Not started | Versioned, documented, installable deliverables |
 
@@ -164,16 +164,16 @@ Acceptance:
 
 ## Phase 4 — Liquid Glass Studio assistant/plugin workflow
 
-<badge>In progress</badge>
+<badge>Complete</badge>
 
 **Goal:** create Liquid Glass Studio as the ChatGPT-side execution twin of `$liquid-glass`, using the same visual/platform knowledge and actual GitHub repository actions. The plugin is a portable Skill package bound to the existing GitHub connector; it does not create a duplicate GitHub server or claim local-machine access.
 
-**Implemented capabilities:**
+**Delivered capabilities:**
 1. **Reference inspection:** evidence-based analysis of supplied screenshots/frames, with confidence and unknowns.
 2. **Visual specification:** structured material, geometry, motion, semantics, fidelity, and validation brief.
 3. **Project diagnosis:** connected-repository inspection of source tree, framework, build, dependencies, renderer, and constraints.
 4. **Strategy selection:** comparison of native, existing libraries, custom GPU/drawing, and fallbacks.
-5. **Code implementation:** actual scoped GitHub repository edits and commits after an explicit change request.
+5. **Code implementation:** scoped GitHub repository edits and commits after an explicit change request.
 6. **Implementation review:** source/diff/capture review against the visual contract.
 7. **Performance/accessibility audit:** code-risk review plus measured evidence only when real profiling/tests are available.
 
@@ -185,30 +185,64 @@ Acceptance:
 - [x] Establish shared knowledge synchronization from canonical Skill/specification files into the portable Studio package.
 - [x] Add a reproducible plugin package builder and automated manifest, binding, reference, and archive tests.
 - [x] Create the private plugin in the user's personal account; verify its private metadata, current release, 28-file package inventory, and `.app.json` GitHub connector ID.
-- [ ] Verify an actual `@Liquid Glass Studio` invocation in the ChatGPT host UI. The connected tools can verify account creation and the package binding but cannot inspect the user's live ChatGPT UI activation state.
+- [x] Verify the actual `@Liquid Glass Studio` invocation in ChatGPT. The user tested it and confirmed the behavior matches the intended workflow.
 
 **Acceptance:**
-- The private plugin is saved in the personal account; its release metadata, packaged Skill, and GitHub app binding are verified. Actual host invocation must be verified in the ChatGPT UI before changing Phase 4 from In progress to Complete.
-- Each Studio workflow has a clear contract and meaningful automated regression coverage.
-- The workflow can take a request from reference to platform-aware repository implementation and review through the GitHub connector.
-- Studio and `$liquid-glass` use the same packaged specifications and L0–L3 definitions.
-- The plugin does not claim to render or change the ChatGPT application interface itself.
+- [x] The private plugin is saved in the personal account; its release metadata, packaged Skill, and GitHub app binding are verified.
+- [x] The user confirmed the actual host invocation works in ChatGPT.
+- [x] Each Studio workflow has a clear contract and meaningful automated regression coverage.
+- [x] The workflow can take a request from reference to platform-aware repository implementation and review through the GitHub connector.
+- [x] Studio and `$liquid-glass` use the same packaged specifications and L0–L3 definitions.
+- [x] The plugin does not claim to render or change the ChatGPT application interface itself.
+
+**Release:** private plugin version `0.1.0`, current release `pluginrel_6aeb56991a6c8191acff6f509dc51779`. See [Studio setup and release details](studio/README.md).
 
 ## Phase 5 — Reference implementations
 
+<badge>Complete</badge>
+
 **Goal:** prove that the specification and Skill can produce working interfaces, not just documents.
 
-Tasks:
-- Choose representative platform families based on available environments and test devices.
-- Build a minimal demo for each selected family, with a real background visible through the material.
-- Demonstrate at least: a static refractive surface, an interactive control, and one organic/liquid transition where the platform permits it.
-- Keep each demo runnable, documented, and independent from unrelated sample projects.
-- Capture reference-aligned screenshots or video and record deviations.
+**Selected targets and rationale:**
+- **Browser / WebGL2:** a controlled app-owned scene texture demonstrates true sample displacement, a portable browser rendering path, semantic HTML controls, and responsive desktop/mobile layouts.
+- **Android Views / Java / OpenGL ES 2.0:** a native Java app with an app-owned GLES framebuffer demonstrates the equivalent material path while keeping text, buttons, and the strength control as native Android Views. The standalone sample uses minSdk 23; this is not a prescribed minimum for existing Android projects.
 
-Acceptance:
-- Every demo builds/runs using documented steps in its target environment.
-- Each demo clearly states whether it demonstrates full refraction, a partial approximation, or fallback rendering.
-- The examples exercise different capabilities instead of repeating the same blur card.
+**Tasks:**
+- [x] Select two representative platform families with runnable browser and Android emulator environments.
+- [x] Build a self-contained WebGL2 demo with an animated background, rounded refractive surface, interactive timeline/playback controls, and a connected organic lobe.
+- [x] Build a standalone Android Java/GLES2 app with an owned framebuffer, refractive SDF lens, native buttons/SeekBar, and connected-shape interaction.
+- [x] Demonstrate real backdrop sampling/displacement for L2 and an animated connected/morphing surface for L3 in both implementations.
+- [x] Provide honest L1/L0 fallback paths and label them separately from refraction.
+- [x] Document standalone build/run steps, supported baseline, renderer boundaries, fidelity, and visual/physical-optics limitations.
+- [x] Add automated contract tests plus a browser smoke test and Android API 35 emulator launch/interaction test.
+- [x] Capture desktop/mobile WebGL2 screenshots and an Android L3 emulator screenshot after activating the connected-lens control.
+- [x] Record deviations and emulator/browser coverage limits; upload APK, GL log, UI hierarchy, and captures as CI artifacts.
+
+**Acceptance:**
+- [x] Both demos build and run using documented steps in their actual target environments.
+- [x] WebGL2 headless Chromium verifies the owned-texture renderer, morph control, playback state, range input, and desktop/mobile captures.
+- [x] Android API 35 emulator verifies app launch, the GLES2 app-owned framebuffer, the L3 renderer diagnostic, the native accessibility node, and a tap that activates the connected lens before capture.
+- [x] Each demo clearly states its actual L2/L3 path and its L0/L1 fallback, without claiming that blur alone is refraction.
+- [x] The examples demonstrate distinct platform implementations rather than repeating a blur-only card.
+
+**Verified CI evidence (2026-11-04):**
+- [x] [Runnable reference demos — GitHub Actions run 41872058940](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41872058940) — both WebGL2 and Android Java/GLES2 jobs completed with `success` on commit `ec2ddd9ec23c46dc1329b28b939e25ac94f56364`.
+- [x] [Skill, Studio, and reference-demo contract validation — run 41872058961](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41872058961) — all 8 Skill tests, 4 Studio package tests, and 5 reference-demo tests passed; package builder and read-only project inventory checks passed.
+- [x] WebGL2 artifacts contain desktop and mobile Chromium screenshots.
+- [x] Android artifacts contain the debug APK, GL diagnostic log, accessibility-window XML, and post-interaction L3 screenshot. The diagnostic log records `GL_CONTEXT_READY`, `SCENE_FBO_READY`, and `GL_READY tier=L3 renderer=GLES2_APP_OWNED_FBO`.
+
+**Validation boundary and deviations:**
+- The WebGL2 capture uses headless Chromium with SwiftShader; the Android capture uses an API 35 x86_64 Google APIs emulator. Neither proves identical performance or behavior on every physical GPU/device.
+- The scene is procedural, the surface normal is estimated from an SDF, and reflection/dispersion terms are approximations. The samples demonstrate real displacement of an app-owned texture and a connected-shape transition; they do not claim physical-optics accuracy or pixel parity with the supplied still/video references.
+- No physical-device frame pacing, GPU utilization, battery, thermal, TalkBack certification, or cross-device visual study is claimed. These remain Phase 6 work.
+
+**Deliverables:**
+- [x] [Runnable implementation catalog](examples/README.md).
+- [x] [WebGL2 implementation and validation guide](examples/webgl2/README.md).
+- [x] [Android Java/GLES2 implementation and validation guide](examples/android-gles/README.md).
+- [x] [Android emulator verification script](examples/android-gles/scripts/verify-emulator.sh).
+- [x] [Reference-demo GitHub Actions workflow](.github/workflows/reference-demos.yml).
+- [x] [Reference implementation contract tests](examples/tests/test_reference_demos.py).
 
 ## Phase 6 — Validation, accessibility, and performance
 
