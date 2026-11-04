@@ -166,7 +166,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 log = Path("artifacts/android-gl-landscape.log").read_text(encoding="utf-8")
-match = re.search(r"UI_READY activity=MainActivity width=(\\d+) height=(\\d+) orientation=(\\d+) screen_width_dp=(\\d+) screen_height_dp=(\\d+)", log)
+match = re.search(r"UI_READY activity=MainActivity width=(\d+) height=(\d+) orientation=(\d+) screen_width_dp=(\d+) screen_height_dp=(\d+)", log)
 if not match:
     raise SystemExit("Could not read the Activity's actual display configuration.")
 root_width, root_height, orientation, screen_width_dp, screen_height_dp = map(int, match.groups())
@@ -182,10 +182,10 @@ app = [node for node in nodes if node.attrib.get("package") == package]
 if not app or not any(node.attrib.get("text") == "Light, held in motion." for node in app):
     raise SystemExit("Landscape capture does not show the Liquid Glass Activity.")
 display = Path("artifacts/android-landscape-display-size.txt").read_text(encoding="utf-8")
-if not re.search(r"Override size:\\s*1280x720", display):
+if not re.search(r"Override size:\s*1280x720", display):
     raise SystemExit("WindowManager did not retain the requested 1280x720 landscape viewport.")
 png = Path("artifacts/android-gles2-landscape.png").read_bytes()
-if len(png) < 100000 or png[:8] != b"\\x89PNG\\r\\n\\x1a\\n":
+if len(png) < 100000 or png[:8] != b"\x89PNG\r\n\x1a\n":
     raise SystemExit("Landscape capture is empty or not a PNG.")
 width, height = struct.unpack(">II", png[16:24])
 if width <= height:
