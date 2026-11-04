@@ -7,5 +7,6 @@ A portable Codex skill for implementing and reviewing Liquid Glass interfaces ac
 - Project inspection helper: [`scripts/inspect_project.py`](scripts/inspect_project.py)
 - Worked workflows: [`examples/web-dom/WORKFLOW.md`](examples/web-dom/WORKFLOW.md) and [`examples/android-java/WORKFLOW.md`](examples/android-java/WORKFLOW.md)
 - Package tests: [`tests/`](tests/)
+- Planning and review templates: [`assets/`](assets/)
 
 The package is deliberately platform-neutral. It does not bundle a rendering engine or claim that a blur-only fallback reproduces refraction.
