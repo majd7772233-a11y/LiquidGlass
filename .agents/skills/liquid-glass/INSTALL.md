@@ -1,62 +1,95 @@
-# Install Liquid Glass for Codex
+# Install Liquid Glass in ChatGPT Desktop for Windows
 
-This is a repository-local Agent Skill at `.agents/skills/liquid-glass/`. Current Codex guidance documents `.agents/skills/` for project skills and `~/.agents/skills/` for personal skills. A skill is discovered from its folder and required `SKILL.md` metadata; its optional references, scripts, and examples travel with the folder.
+This guide targets **ChatGPT Desktop installed from the Microsoft Store**, using the personal Codex Skills directory reported for that app:
 
-## Use it in this repository
+`$HOME\.codex\skills\`
 
-Open this repository (or a subdirectory beneath it) in Codex. The skill is located at:
+On the Windows profile in the maintainer setup, this resolves to:
 
-```text
-.agents/skills/liquid-glass/SKILL.md
-```
+`C:\Users\Magd\.codex\skills\`
 
-Invoke it explicitly with `$liquid-glass`, or describe a matching implementation/review task so Codex can consider it for implicit invocation. Skill discovery does not guarantee that an agent will invoke it for every related prompt.
+The installed Skill must end up at:
 
-## Install it for all your projects
+`%USERPROFILE%\.codex\skills\liquid-glass\SKILL.md`
 
-### Windows PowerShell
+## Install
+
+1. Clone the public repository, or update an existing clone:
 
 ```powershell
-# Clone the public repository if you do not already have it.
 git clone https://github.com/majd7772233-a11y/LiquidGlass.git
-
-$skillsHome = Join-Path $HOME ".agents\skills"
-New-Item -ItemType Directory -Force -Path $skillsHome | Out-Null
-$target = Join-Path $skillsHome "liquid-glass"
-if (Test-Path $target) { Remove-Item -LiteralPath $target -Recurse -Force }
-Copy-Item -Recurse -Force `
-  ".\LiquidGlass\.agents\skills\liquid-glass" `
-  $target
+Set-Location .\LiquidGlass
 ```
 
-If the repository is already cloned, run only the `New-Item` and `Copy-Item` commands from its parent directory. To update, pull the latest repository changes and repeat the copy command. Back up any local edits in the personal skill folder first; the update command replaces that installed folder.
+2. From the repository root, run this PowerShell block. It verifies the source, backs up an existing personal copy, and copies the complete Skill directory:
 
-### macOS / Linux / Git Bash
+```powershell
+$repoRoot = (Get-Location).Path
+$source = Join-Path $repoRoot ".agents\skills\liquid-glass"
+$skillsRoot = Join-Path $HOME ".codex\skills"
+$target = Join-Path $skillsRoot "liquid-glass"
 
-```bash
-git clone https://github.com/majd7772233-a11y/LiquidGlass.git
-mkdir -p "$HOME/.agents/skills"
-rm -rf "$HOME/.agents/skills/liquid-glass"
-cp -R LiquidGlass/.agents/skills/liquid-glass "$HOME/.agents/skills/"
+if (-not (Test-Path -LiteralPath (Join-Path $source "SKILL.md"))) {
+    throw "Skill source not found. Run this block from the LiquidGlass repository root."
+}
+
+New-Item -ItemType Directory -Force -Path $skillsRoot | Out-Null
+
+if (Test-Path -LiteralPath $target) {
+    $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $backup = Join-Path $skillsRoot "liquid-glass.backup-$stamp"
+    Copy-Item -LiteralPath $target -Destination $backup -Recurse
+    Remove-Item -LiteralPath $target -Recurse -Force
+    Write-Host "Previous Skill backed up to: $backup"
+}
+
+Copy-Item -LiteralPath $source -Destination $target -Recurse -Force
+
+if (-not (Test-Path -LiteralPath (Join-Path $target "SKILL.md"))) {
+    throw "Installation verification failed: SKILL.md was not copied."
+}
+
+Write-Host "Liquid Glass installed at: $target"
 ```
 
-To update, pull the latest repository changes and replace the installed `liquid-glass` directory with the newer copy.
+3. Restart ChatGPT Desktop or start a new Codex session so it reloads the personal Skills directory.
 
-## Verify the package
+## Use the Skill
 
-From the repository root:
+Invoke it explicitly in Codex:
 
-```bash
-python .agents/skills/liquid-glass/scripts/inspect_project.py .
-python -m unittest discover -s .agents/skills/liquid-glass/tests -v
+```text
+$liquid-glass
 ```
 
-The inventory script prints evidence only; the tests validate package structure and the bundled workflow fixtures. They do not prove visual parity on a physical device.
+You can then ask it to inspect a project, choose the best available rendering route, implement a material, or review an existing result.
 
-If the skill does not appear in an already-running Codex session, start a new session or restart Codex. The skill name must remain `liquid-glass`, matching its directory and `SKILL.md` frontmatter.
+## Update
 
-## Keep in mind
+From the existing repository clone:
 
-- Keep the entire skill directory together; do not copy `SKILL.md` without its `references/`, `scripts/`, `examples/`, and `agents/` folders.
-- The repository-local copy is updated when this repository is updated. A personal copy must be updated separately.
-- For exact supported locations and current behavior, consult the official [Build skills guide](https://learn.chatgpt.com/docs/build-skills).
+```powershell
+Set-Location "C:\path\to\LiquidGlass"
+git pull --ff-only
+```
+
+Then run the installation PowerShell block again. It backs up the installed `liquid-glass` folder before replacing it; other Skills in `$HOME\.codex\skills` are not touched.
+
+## Verify
+
+```powershell
+$skill = Join-Path $HOME ".codex\skills\liquid-glass\SKILL.md"
+Test-Path -LiteralPath $skill
+Get-Content -LiteralPath $skill -TotalCount 8
+```
+
+The first command should return `True`, and the header should show the Skill name `liquid-glass`.
+
+## Repository-local versus personal installation
+
+- **Repository copy:** `.agents/skills/liquid-glass/` stays in this Git repository so the Skill can be versioned with the project.
+- **ChatGPT Desktop personal copy:** `$HOME\.codex\skills\liquid-glass\` is the install location for the Microsoft Store desktop setup described here.
+
+These are two separate copies. Pulling the Git repository updates the repository copy; rerun the PowerShell installation block to update the personal copy.
+
+This guide documents the user-confirmed ChatGPT Desktop environment. Do not assume that every Codex client or distribution uses the same personal Skills directory.
