@@ -95,6 +95,9 @@ Deliverables:
 - [x] [.agents/skills/liquid-glass/tests/test_skill_package.py](.agents/skills/liquid-glass/tests/test_skill_package.py) — automated package and workflow-fixture tests.
 - [x] [.agents/skills/liquid-glass/INSTALL.md](.agents/skills/liquid-glass/INSTALL.md) and [README.md](.agents/skills/liquid-glass/README.md) — installation, update, and package overview.
 - [x] [.agents/skills/liquid-glass/agents/openai.yaml](.agents/skills/liquid-glass/agents/openai.yaml) — optional user-facing metadata.
+- [x] [.agents/skills/liquid-glass/references/implementation-workflow.md](.agents/skills/liquid-glass/references/implementation-workflow.md) — practical integration and failure-handling checklist.
+- [x] [.agents/skills/liquid-glass/assets/](.agents/skills/liquid-glass/assets/) — implementation brief and visual-review templates.
+- [x] [docs/skill-installation.md](docs/skill-installation.md) — repository-level install/update/validation index.
 
 Acceptance:
 - [x] The Skill has a valid `SKILL.md` name/description manifest and lives in the Codex repository skill discovery directory.
