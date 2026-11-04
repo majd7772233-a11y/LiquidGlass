@@ -92,8 +92,8 @@ These are measured software-renderer diagnostics, deliberately recorded rather t
 The Chromium sample collected 18 frame intervals and all 18 exceeded 16.7 ms. The Android four-surface sample collected 19 callbacks and all 19 exceeded both 16.7 ms and 33.3 ms. These results show that the CI's software-rendered graphics path is slow under this workload; they do not establish how a phone GPU performs. In particular, CPU GL submission can be expensive under SwiftShader and is not a substitute for GPU duration.
 
 Evidence:
-- [WebGL2 validation run 41899401878](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899401878) — Chromium browser job passed, with the responsive/accessibility/fallback captures and JSON diagnostics.
-- [Android emulator run 41899729725](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899729725) — Android job passed, including L3 startup, density, test-only landscape layout, four-surface SDF workload, and profiling artifact.
+- [WebGL2 browser job 126817477347](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899401878/job/126817477347) — Chromium browser job passed, with the responsive/accessibility/fallback captures and JSON diagnostics.
+- [Android emulator job 126818622052](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899729725/job/126818622052) — Android job passed, including L3 startup, density, test-only landscape layout, four-surface SDF workload, and profiling artifact.
 
 ### Android
 
