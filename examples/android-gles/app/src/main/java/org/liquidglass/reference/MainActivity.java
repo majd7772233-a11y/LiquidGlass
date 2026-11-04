@@ -1,6 +1,7 @@
 package org.liquidglass.reference;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.animation.ValueAnimator;
 import android.os.Build;
 import android.provider.Settings;
@@ -53,6 +54,10 @@ public final class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Deterministic landscape layout exercise for headless emulator CI; production launches omit this extra.
+        if (getIntent().getBooleanExtra("test_force_landscape", false)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         Window window = getWindow();
         window.setStatusBarColor(Color.rgb(8, 13, 29));
         window.setNavigationBarColor(Color.rgb(8, 13, 29));

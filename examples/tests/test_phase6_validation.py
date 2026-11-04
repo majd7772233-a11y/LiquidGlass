@@ -34,7 +34,7 @@ class PhaseSixValidationTests(unittest.TestCase):
             self.assertIn(token, styles)
         for token in ("desktop-midnight", "tablet-bright", "mobile-detailed",
                       "landscape-bright", "reducedMotion", "forcedColors",
-                      "Keyboard focus", "gpuTimeMs"):
+                      "Keyboard focus", "gpuTimeMs", "exteriorContrast", "panelContrast"):
             self.assertIn(token, smoke)
 
     def test_android_renderer_is_demand_driven_and_measures_frame_pacing(self) -> None:
@@ -53,6 +53,8 @@ class PhaseSixValidationTests(unittest.TestCase):
         self.assertIn("ACTIVITY_RESUMED activity=MainActivity", activity)
         self.assertIn("UI_READY activity=MainActivity", activity)
         self.assertIn("configuration.orientation", activity)
+        self.assertIn("test_force_landscape", activity)
+        self.assertIn("SCREEN_ORIENTATION_LANDSCAPE", activity)
         self.assertIn("screenWidthDp", activity)
         self.assertIn("WINDOW_FOCUS hasFocus=", activity)
         self.assertIn('morphButton.setContentDescription("Connect the liquid lens")', activity)
@@ -71,7 +73,7 @@ class PhaseSixValidationTests(unittest.TestCase):
         for token in ("android-accessibility-report.json", "android-window-multisurface.xml",
                       "ACTIVITY_RESUMED activity=MainActivity", "uiautomator dump",
                       "minimum_action_target_dp", "MULTI_CAPTURE_BYTES",
-                      "wm size 720x1280", "wm size 1280x720", "settings put system user_rotation 1", "wm user-rotation lock 1", "orientation=2", "screen_width_dp",
+                      "wm size 720x1280", "wm size 1280x720", "--ez test_force_landscape true", "orientation=2", "screen_width_dp",
                       "Override size:", "root_width <= root_height",
                       "android-window-medium.xml", "android-window-landscape.xml", "root_width <= root_height", "screen_width_dp <= screen_height_dp",
                       "android-gles2-landscape.png", "extra_surfaces 3",

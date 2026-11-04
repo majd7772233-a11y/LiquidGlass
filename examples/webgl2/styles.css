@@ -278,6 +278,114 @@ html.no-webgl[data-renderer="css-l0"] .glass-panel {
   -webkit-backdrop-filter: none;
 }
 html.no-webgl #scene { display: none; }
+
+/* Bright backdrop: preserve transmission while switching to high-contrast ink. */
+html[data-scene="bright"] {
+  color-scheme: light;
+  --muted: #102b43;
+  --line: rgba(16, 43, 67, .24);
+  --cyan: #075c79;
+  color: #102b43;
+}
+html[data-scene="bright"] body { background: #dce9e2; }
+html[data-scene="bright"] .wordmark { color: #102b43; }
+html[data-scene="bright"] .wordmark-mark { color: #075c79; }
+html[data-scene="bright"] .wordmark-light { color: #25465e; }
+html[data-scene="bright"] .topbar-meta,
+html[data-scene="bright"] .page-footer,
+html[data-scene="bright"] .stage-caption { color: #102b43; }
+html[data-scene="bright"] .live-dot,
+html[data-scene="bright"] .state-indicator {
+  background: #087b66;
+  box-shadow: 0 0 8px rgba(8, 123, 102, .22);
+}
+html[data-scene="bright"] .eyebrow,
+html[data-scene="bright"] .panel-kicker { color: #25465e; }
+html[data-scene="bright"] .stage-heading h1 { color: #102b43; }
+html[data-scene="bright"] .stage-heading h1 span {
+  background: linear-gradient(100deg, #075c79, #59417c 52%, #812c66);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+html[data-scene="bright"] .stage-copy { color: #102b43; }
+html[data-scene="bright"] .glass-panel {
+  color: #102b43;
+  border: 1px solid rgba(20, 54, 78, .38);
+  background: rgba(248, 252, 255, .80);
+  box-shadow: 0 28px 80px rgba(32, 62, 79, .18);
+}
+html[data-scene="bright"] .track-index {
+  color: #153951;
+  background: rgba(255, 255, 255, .92);
+  border-color: rgba(20, 54, 78, .34);
+}
+html[data-scene="bright"] .track-index span { color: #38566c; }
+html[data-scene="bright"] .visualizer-line {
+  background: linear-gradient(90deg, transparent, rgba(23, 65, 94, .34), transparent);
+}
+html[data-scene="bright"] .visualizer-orb {
+  background: radial-gradient(ellipse, rgba(18, 123, 154, .22), rgba(106, 82, 153, .10) 48%, transparent 70%);
+}
+html[data-scene="bright"] .visualizer-readout { color: #38566c; }
+html[data-scene="bright"] .visualizer-readout span { color: #075c79; }
+html[data-scene="bright"] .time-row { color: #38566c; }
+html[data-scene="bright"] .play-control {
+  color: #102b43;
+  border-color: rgba(20, 54, 78, .38);
+  background: linear-gradient(120deg, rgba(18, 86, 119, .13), rgba(102, 79, 145, .10));
+}
+html[data-scene="bright"] .play-glyph { color: #075c79; }
+html[data-scene="bright"] .icon-control {
+  color: #183c56;
+  background: rgba(224, 240, 248, .90);
+  border-color: rgba(20, 54, 78, .40);
+}
+html[data-scene="bright"] .panel-footer { border-top-color: rgba(20, 54, 78, .28); }
+html[data-scene="bright"] #renderer-status { color: #24485f; }
+html[data-scene="bright"] .morph-control {
+  color: #12344e;
+  background: rgba(22, 91, 125, .10);
+  border-color: rgba(20, 54, 78, .40);
+}
+html[data-scene="bright"] .morph-symbol { color: #075c79; }
+html[data-scene="bright"] .morph-control[aria-pressed="true"] {
+  color: #102b43;
+  background: rgba(22, 91, 125, .18);
+  border-color: rgba(20, 54, 78, .65);
+}
+html[data-scene="bright"] .play-control:focus-visible,
+html[data-scene="bright"] .icon-control:focus-visible,
+html[data-scene="bright"] .morph-control:focus-visible,
+html[data-scene="bright"] #progress:focus-visible { outline-color: #075c79; }
+html.no-webgl[data-scene="bright"] body {
+  background-color: #eaf2ee;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(16, 43, 67, .10) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(16, 43, 67, .10) 0 1px, transparent 1px 22px),
+    radial-gradient(ellipse at 18% 22%, rgba(95, 183, 193, .26), transparent 42%),
+    radial-gradient(ellipse at 82% 78%, rgba(156, 127, 190, .20), transparent 45%),
+    #eaf2ee;
+}
+@media (prefers-contrast: more) {
+  html[data-scene="bright"] .glass-panel {
+    color: #102b43; background: #ffffff; border: 2px solid #102b43; box-shadow: none;
+  }
+  html[data-scene="bright"] .track-index,
+  html[data-scene="bright"] .play-control,
+  html[data-scene="bright"] .icon-control,
+  html[data-scene="bright"] .morph-control {
+    color: #102b43; background: #ffffff; border: 2px solid #102b43;
+  }
+}
+html[data-scene="bright"][data-transparency="reduced"] .glass-panel {
+  color: #102b43; background: #f8fcff; border: 2px solid #102b43;
+}
+html[data-scene="bright"][data-transparency="reduced"] .track-index,
+html[data-scene="bright"][data-transparency="reduced"] .play-control,
+html[data-scene="bright"][data-transparency="reduced"] .icon-control,
+html[data-scene="bright"][data-transparency="reduced"] .morph-control {
+  color: #102b43; background: #ffffff; border: 1px solid #102b43;
+}
 @media (max-width: 600px) {
   .topbar, .page-footer { width: calc(100% - 36px); }
   .topbar { padding-top: 22px; }

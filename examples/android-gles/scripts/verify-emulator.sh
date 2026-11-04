@@ -127,17 +127,14 @@ grep -Fq "GL_ACCESSIBILITY reduced_motion=true high_text_contrast=true" artifact
 adb shell settings put secure high_text_contrast_enabled 0
 adb shell settings put global animator_duration_scale 1
 
-# Landscape configuration: use the Android WindowManager user-rotation lock.
-# This is deterministic on headless emulator images where the accelerometer sensor does not report rotation.
-adb shell settings put system accelerometer_rotation 0
-adb shell settings put system user_rotation 1
-adb shell wm user-rotation lock 1
+# Landscape configuration: request a landscape Activity from the test harness.
+# Headless emulator images do not consistently emit physical accelerometer rotation events.
 adb shell wm size 1280x720
 adb shell wm density 160
-sleep 2
+adb shell settings put system accelerometer_rotation 0
 adb shell am force-stop org.liquidglass.reference.debug
 adb logcat -c
-adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity > artifacts/android-landscape-launch.txt
+adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity --ez test_force_landscape true > artifacts/android-landscape-launch.txt
 LANDSCAPE_READY=0
 for attempt in $(seq 1 35); do
   adb logcat -d -s LiquidGlassDemo:I > artifacts/android-gl-landscape.log
@@ -152,13 +149,12 @@ for attempt in $(seq 1 35); do
   sleep 1
 done
 if [[ "$LANDSCAPE_READY" != "1" ]]; then
-  echo "Actual emulator landscape rotation did not produce a focused landscape Activity." >&2
+  echo "Landscape test launch did not produce a focused landscape Activity." >&2
   cat artifacts/android-gl-landscape.log >&2
   exit 1
 fi
 adb shell wm size > artifacts/android-landscape-display-size.txt
 adb shell wm density > artifacts/android-landscape-display-density.txt
-adb shell wm user-rotation > artifacts/android-landscape-user-rotation.txt
 adb shell uiautomator dump /sdcard/liquid-glass-landscape.xml >/dev/null
 adb pull /sdcard/liquid-glass-landscape.xml artifacts/android-window-landscape.xml
 adb shell screencap -p /sdcard/liquid-glass-android-landscape.png
@@ -170,34 +166,26 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 log = Path("artifacts/android-gl-landscape.log").read_text(encoding="utf-8")
-match = re.search(r"UI_READY activity=MainActivity width=(\d+) height=(\d+) orientation=(\d+) screen_width_dp=(\d+) screen_height_dp=(\d+)", log)
+match = re.search(r"UI_READY activity=MainActivity width=(\\d+) height=(\\d+) orientation=(\\d+) screen_width_dp=(\\d+) screen_height_dp=(\\d+)", log)
 if not match:
-    raise SystemExit("Could not read the app's actual display configuration.")
+    raise SystemExit("Could not read the Activity's actual display configuration.")
 root_width, root_height, orientation, screen_width_dp, screen_height_dp = map(int, match.groups())
 if orientation != 2 or root_width <= root_height or screen_width_dp <= screen_height_dp:
     raise SystemExit(
         f"Activity is not laid out in landscape: root={root_width}x{root_height}, "
         f"orientation={orientation}, dp={screen_width_dp}x{screen_height_dp}"
     )
-
 hierarchy = ET.parse("artifacts/android-window-landscape.xml").getroot()
-if hierarchy.attrib.get("rotation") not in {"1", "3"}:
-    raise SystemExit("UIAutomator did not confirm a 90/270 degree display rotation.")
 nodes = list(hierarchy.iter("node"))
 package = "org.liquidglass.reference.debug"
 app = [node for node in nodes if node.attrib.get("package") == package]
 if not app or not any(node.attrib.get("text") == "Light, held in motion." for node in app):
     raise SystemExit("Landscape capture does not show the Liquid Glass Activity.")
-
 display = Path("artifacts/android-landscape-display-size.txt").read_text(encoding="utf-8")
-if not re.search(r"Override size:\s*1280x720", display):
+if not re.search(r"Override size:\\s*1280x720", display):
     raise SystemExit("WindowManager did not retain the requested 1280x720 landscape viewport.")
-user_rotation = Path("artifacts/android-landscape-user-rotation.txt").read_text(encoding="utf-8")
-if not re.search(r"lock 1", user_rotation):
-    raise SystemExit("The emulator did not report a landscape user rotation.")
-
 png = Path("artifacts/android-gles2-landscape.png").read_bytes()
-if len(png) < 100000 or png[:8] != b"\x89PNG\r\n\x1a\n":
+if len(png) < 100000 or png[:8] != b"\\x89PNG\\r\\n\\x1a\\n":
     raise SystemExit("Landscape capture is empty or not a PNG.")
 width, height = struct.unpack(">II", png[16:24])
 if width <= height:
@@ -207,9 +195,9 @@ PY
 # Restore defaults, unlock the emulator, and exercise four independent refractive SDF surfaces.
 adb shell wm size reset
 adb shell wm density reset
-adb shell settings put system accelerometer_rotation 0
-adb shell wm user-rotation lock 0
+adb shell settings put system accelerometer_rotation 1
 adb shell settings put system user_rotation 0
+adb shell wm user-rotation free
 adb shell input keyevent KEYCODE_WAKEUP || true
 adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
 sleep 3

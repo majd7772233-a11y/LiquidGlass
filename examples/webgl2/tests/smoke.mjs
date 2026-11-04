@@ -112,6 +112,50 @@ try {
     assert.equal(diagnostics.height, Math.floor(scenario.height * Math.min(scenario.dpr, 1.65)));
     assert.ok(diagnostics.estimatedSceneTextureBytes > 0);
     assert.equal(diagnostics.drawCallsPerFrame, 2);
+    if (scenario.scene === "bright") {
+      const contrast = await page.evaluate(() => {
+        const channels = value => (value.match(/[\\d.]+/g) || []).map(Number);
+        const luminance = rgb => {
+          const values = rgb.map(value => {
+            const channel = value / 255;
+            return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+          });
+          return values[0] * 0.2126 + values[1] * 0.7152 + values[2] * 0.0722;
+        };
+        const ratio = (a, b) => {
+          const high = Math.max(luminance(a), luminance(b));
+          const low = Math.min(luminance(a), luminance(b));
+          return (high + 0.05) / (low + 0.05);
+        };
+        const panelStyle = getComputedStyle(document.querySelector("#glass-panel"));
+        const bg = channels(panelStyle.backgroundColor);
+        const alpha = bg.length >= 4 ? bg[3] : 1;
+        const panelBg = bg.slice(0, 3);
+        const panelColor = channels(getComputedStyle(document.querySelector("#panel-title")).color).slice(0, 3);
+        const playColor = channels(getComputedStyle(document.querySelector("#play-toggle")).color).slice(0, 3);
+        const exteriorColor = channels(getComputedStyle(document.querySelector(".stage-copy")).color).slice(0, 3);
+        const backdrops = [[148,171,173], [240,232,199], [148,176,161]];
+        const composite = backdrop => panelBg.map((channel, i) => channel * alpha + backdrop[i] * (1 - alpha));
+        return {
+          panelAlpha: alpha,
+          panelContrast: Math.min(...backdrops.map(backdrop => ratio(panelColor, composite(backdrop)))),
+          buttonContrast: Math.min(...backdrops.map(backdrop => ratio(playColor, composite(backdrop)))),
+          exteriorContrast: Math.min(...backdrops.map(backdrop => ratio(exteriorColor, backdrop)))
+        };
+      });
+      assert.ok(contrast.panelAlpha >= 0.78, "Bright-scene glass opacity is insufficient for readable foregrounds: " + JSON.stringify(contrast));
+      assert.ok(contrast.panelContrast >= 4.5, "Bright-scene panel text contrast is below WCAG AA: " + JSON.stringify(contrast));
+      assert.ok(contrast.buttonContrast >= 4.5, "Bright-scene button contrast is below WCAG AA: " + JSON.stringify(contrast));
+      assert.ok(contrast.exteriorContrast >= 4.5, "Bright-scene exterior text contrast is below WCAG AA: " + JSON.stringify(contrast));
+      await page.locator("html").evaluate(element => element.dataset.transparency = "reduced");
+      const reduced = await page.locator("#glass-panel").evaluate(element => ({
+        color: getComputedStyle(element).color,
+        background: getComputedStyle(element).backgroundColor
+      }));
+      assert.equal(reduced.color, "rgb(16, 43, 67)");
+      assert.equal(reduced.background, "rgb(248, 252, 255)");
+      await page.locator("html").evaluate(element => delete element.dataset.transparency);
+    }
     await page.screenshot({ path: join(artifactDir, scenario.name + ".png"), fullPage: true });
     if (scenario.name === "mobile-detailed") {
       await page.screenshot({ path: join(artifactDir, "webgl2-mobile.png"), fullPage: true });
