@@ -275,6 +275,12 @@ Acceptance:
 - [ ] Perform human TalkBack/screen-reader speech, switch-access, magnification, and visual reference review on representative physical devices.
 - [ ] Validate WebGL2 behavior and GPU timing on a physical browser/GPU (the current headless CI uses SwiftShader).
 
+**Verified CI evidence (2026-11-04):**
+- [x] [WebGL2 browser validation job 126817477347](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899401878/job/126817477347) passed on the unchanged WebGL2 bright-scene/accessibility implementation. It emitted the responsive capture matrix, L0/L1 fallback captures, and JSON diagnostics.
+- [x] [Android API 35 emulator validation job 126818622052](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899729725/job/126818622052) passed on commit `f3d7c1ed71ca0359e095068279489c3ace50d57b`: L3 framebuffer initialization, accessibility target report, 720×1280 portrait, a test-only landscape Activity layout at 1280×720, four SDF surfaces, and Android profiler artifacts.
+
+**Observed software-renderer warning:** the captured headless Chromium/SwiftShader desktop sample averaged 152.77 ms/frame (P95 266.80 ms); the Android SwiftShader four-surface sample averaged 281.31 ms/frame (P95 775.20 ms, about 3.6 FPS). These are poor software-emulation results, not evidence of physical-device performance and not a production performance pass. They are recorded to prevent an optimistic performance claim and to motivate the remaining physical-GPU profiling.
+
 **Measurement boundary:** the GitHub Actions Android job uses an API 35 x86_64 emulator with SwiftShader; its landscape scenario requests `SCREEN_ORIENTATION_LANDSCAPE` through a test-only launch extra to verify layout and configuration, not physical accelerometer rotation; browser CI uses headless Chromium/SwiftShader. Frame callback and CPU command-submission numbers are diagnostics, not GPU execution timings. Texture-byte values describe only the app-owned RGBA8 texture, not total process/driver memory. Battery and thermal snapshots from an emulator are not device-endurance evidence. See [Phase 6 validation and profiling protocol](examples/validation/README.md).
 
 **Deliverables:**
