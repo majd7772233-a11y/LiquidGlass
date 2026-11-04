@@ -7,3 +7,4 @@ These documents define the platform-neutral visual and interaction contract for 
 - [Reference matrix](reference-matrix.md) — maps still images and the inspected motion reference to specific review criteria.
 
 Read these before implementing platform-specific rendering. They describe the desired result, not a mandated rendering stack.
+- [Skill installation](skill-installation.md) — install, update, and validate the portable Codex Skill.
