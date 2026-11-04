@@ -254,19 +254,19 @@ Acceptance:
 - [x] Create a visual review checklist, review-record template, and side-by-side capture procedure with evidence labels.
 - [x] Add WebGL2 diagnostics for rolling frame intervals, average/P95/max frame time, slow-frame counts, CPU-side GL command submission, draw calls, DPR, and estimated RGBA8 scene-texture memory.
 - [x] Add Android GLES2 diagnostics for GL vendor/renderer/version, frame callback intervals, P95 frame pacing, approximate FPS, slow-frame counts, CPU-side GL submission, estimated FBO texture memory, and pass/surface counts.
-- [x] Add multiple background cases: dark, bright, and high-frequency/detail scenes.
+- [x] Add multiple background cases: dark, bright, and high-frequency/detail scenes; adapt bright-scene foreground and glass-surface tones to maintain contrast and enforce WCAG AA checks in the browser matrix.
 - [x] Add responsive browser captures for desktop, tablet, mobile/high-DPR, and landscape; test semantic names, state, keyboard order, focus indicator, and action hit targets.
 - [x] Add browser reduced-motion, increased-contrast, reduced-transparency, forced-colors, and L0/L1 fallback tests.
 - [x] Improve Android touch targets, high-text-contrast handling, reduced-animation handling, orientation behavior, and demand-driven rendering while paused/idle.
 - [x] Add UIAutomator checks for native accessibility names and dp-sized hit regions.
-- [x] Add Android emulator scenarios for alternate density/size, landscape, and one primary plus three additional SDF glass surfaces.
+- [x] Add Android emulator scenarios for alternate density/size, a deterministic test-only landscape Activity request, and one primary plus three additional SDF glass surfaces.
 - [x] Add reproducible Android profiling collection for gfxinfo/frame stats, process memory, CPU snapshot, display/density, SurfaceFlinger layers, battery, and thermal service diagnostics.
 - [x] Add CI contract tests and retain browser/device evidence as workflow artifacts.
 - [x] Document GPU/overdraw/thermal/battery physical-device profiling protocol and the exact limits of emulator/headless evidence.
 
 **Acceptance evidence:**
 - [x] Test procedures and review record are reproducible and checked in.
-- [x] Browser and Android automation cover backgrounds, viewport/density/orientation, accessibility states, fallback tiers, and multiple surfaces.
+- [x] Browser and Android automation cover backgrounds, viewport/density/orientation, accessibility states, fallback tiers, and multiple surfaces. The browser's bright-scene text and button checks require at least 4.5:1 against all tested palette anchors.
 - [x] Emulator/headless diagnostic results and raw evidence are captured by CI; no visual-parity claim is made without comparative evidence.
 - [x] Known platform and hardware limitations are explicit in docs and generated reports.
 
@@ -275,7 +275,7 @@ Acceptance:
 - [ ] Perform human TalkBack/screen-reader speech, switch-access, magnification, and visual reference review on representative physical devices.
 - [ ] Validate WebGL2 behavior and GPU timing on a physical browser/GPU (the current headless CI uses SwiftShader).
 
-**Measurement boundary:** the GitHub Actions Android job uses an API 35 x86_64 emulator with SwiftShader; browser CI uses headless Chromium/SwiftShader. Frame callback and CPU command-submission numbers are diagnostics, not GPU execution timings. Texture-byte values describe only the app-owned RGBA8 texture, not total process/driver memory. Battery and thermal snapshots from an emulator are not device-endurance evidence. See [Phase 6 validation and profiling protocol](examples/validation/README.md).
+**Measurement boundary:** the GitHub Actions Android job uses an API 35 x86_64 emulator with SwiftShader; its landscape scenario requests `SCREEN_ORIENTATION_LANDSCAPE` through a test-only launch extra to verify layout and configuration, not physical accelerometer rotation; browser CI uses headless Chromium/SwiftShader. Frame callback and CPU command-submission numbers are diagnostics, not GPU execution timings. Texture-byte values describe only the app-owned RGBA8 texture, not total process/driver memory. Battery and thermal snapshots from an emulator are not device-endurance evidence. See [Phase 6 validation and profiling protocol](examples/validation/README.md).
 
 **Deliverables:**
 - [x] [Phase 6 validation guide](examples/validation/README.md).
