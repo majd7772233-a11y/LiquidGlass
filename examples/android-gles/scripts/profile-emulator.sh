@@ -9,7 +9,7 @@ adb logcat -c
 adb shell am force-stop "$PACKAGE"
 adb shell input keyevent KEYCODE_WAKEUP || true
 adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
-adb shell am start -W -n "$PACKAGE/org.liquidglass.reference.MainActivity" --ei extra_surfaces 3 > artifacts/android-performance-launch.txt
+adb shell am start -n "$PACKAGE/org.liquidglass.reference.MainActivity" --ei extra_surfaces 3 > artifacts/android-performance-launch.txt
 sleep 12
 
 adb logcat -d -s LiquidGlassDemo:I > artifacts/android-performance.log

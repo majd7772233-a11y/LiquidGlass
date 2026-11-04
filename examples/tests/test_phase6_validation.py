@@ -63,6 +63,9 @@ class PhaseSixValidationTests(unittest.TestCase):
     def test_android_emulator_scripts_capture_accessibility_resizing_multi_surface_and_profile(self) -> None:
         verify = (ANDROID / "scripts" / "verify-emulator.sh").read_text(encoding="utf-8")
         profile = (ANDROID / "scripts" / "profile-emulator.sh").read_text(encoding="utf-8")
+        self.assertIn("am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity --ei extra_surfaces 3", verify)
+        self.assertIn('am start -n "$PACKAGE/org.liquidglass.reference.MainActivity" --ei extra_surfaces 3', profile)
+        self.assertNotIn("am start -W", verify + profile)
         for token in ("android-accessibility-report.json", "android-window-multisurface.xml",
                       "ACTIVITY_RESUMED activity=MainActivity", "uiautomator dump",
                       "minimum_action_target_dp", "MULTI_CAPTURE_BYTES",

@@ -102,7 +102,7 @@ adb shell wm dismiss-keyguard >/dev/null 2>&1 || true
 sleep 3
 adb shell am force-stop org.liquidglass.reference.debug
 adb logcat -c
-adb shell am start -W -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity --ei extra_surfaces 3 > artifacts/android-multisurface-launch.txt
+adb shell am start -n org.liquidglass.reference.debug/org.liquidglass.reference.MainActivity --ei extra_surfaces 3 > artifacts/android-multisurface-launch.txt
 MULTI_READY=0
 for attempt in $(seq 1 35); do
   adb logcat -d -s LiquidGlassDemo:I > artifacts/android-gl-multisurface.log
