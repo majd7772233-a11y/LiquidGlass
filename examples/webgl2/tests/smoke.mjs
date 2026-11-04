@@ -1,5 +1,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, stat } from "node:fs/promises";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const server = spawn(process.execPath, ["server.mjs"], { stdio: ["ignore", "pipe", "pipe"] });
@@ -22,7 +24,8 @@ try {
     headless: true,
     args: ["--no-sandbox", "--disable-dev-shm-usage", "--enable-webgl", "--use-gl=angle", "--use-angle=swiftshader"]
   });
-  await mkdir(new URL("../artifacts/", import.meta.url), { recursive: true });
+  const artifactDir = fileURLToPath(new URL("../artifacts/", import.meta.url));
+  await mkdir(artifactDir, { recursive: true });
 
   const desktop = await browser.newPage({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 1 });
   const pageErrors = [];
@@ -37,7 +40,7 @@ try {
   await morph.click();
   if (await morph.getAttribute("aria-pressed") !== "true") throw new Error("The organic lens control did not enter its connected state.");
   await desktop.waitForTimeout(450);
-  await desktop.screenshot({ path: new URL("../artifacts/webgl2-desktop.png", import.meta.url), fullPage: true });
+  await desktop.screenshot({ path: join(artifactDir, "webgl2-desktop.png"), fullPage: true });
 
   const play = desktop.locator("#play-toggle");
   await play.click();
@@ -51,11 +54,11 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await mobile.goto("http://127.0.0.1:4173/", { waitUntil: "networkidle" });
   await mobile.waitForFunction(() => document.documentElement.dataset.renderer === "webgl2-l2-l3", { timeout: 15000 });
-  await mobile.screenshot({ path: new URL("../artifacts/webgl2-mobile.png", import.meta.url), fullPage: true });
+  await mobile.screenshot({ path: join(artifactDir, "webgl2-mobile.png"), fullPage: true });
 
   if (pageErrors.length) throw new Error("Browser errors: " + pageErrors.join(" | "));
   for (const path of ["../artifacts/webgl2-desktop.png", "../artifacts/webgl2-mobile.png"]) {
-    const info = await stat(new URL(path, import.meta.url));
+    const info = await stat(join(artifactDir, path.split("/").at(-1)));
     if (info.size < 12000) throw new Error("Screenshot is unexpectedly small: " + path);
   }
   process.stdout.write("PASS: WebGL2 initialized; owned-backdrop L2/L3 renderer, morph control, playback state, slider, and desktop/mobile captures verified.\n");
