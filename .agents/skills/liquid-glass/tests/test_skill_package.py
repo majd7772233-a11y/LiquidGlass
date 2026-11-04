@@ -10,8 +10,32 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = SKILL_DIR.parents[2]
 INSPECTOR = SKILL_DIR / "scripts" / "inspect_project.py"
 EXAMPLES = SKILL_DIR / "examples"
+PLATFORM_DOCS = REPO_ROOT / "docs" / "platform-adaptation"
+
+PLATFORM_GUIDES = (
+    "README.md",
+    "capability-matrix.md",
+    "web.md",
+    "android.md",
+    "apple.md",
+    "desktop.md",
+    "game-engines.md",
+    "cross-platform.md",
+    "constrained.md",
+)
+
+PLATFORM_WORKFLOWS = (
+    "apple-swiftui/WORKFLOW.md",
+    "windows-winui/WORKFLOW.md",
+    "qt6-quick/WORKFLOW.md",
+    "flutter/WORKFLOW.md",
+    "unity-urp/WORKFLOW.md",
+    "unreal-postprocess/WORKFLOW.md",
+    "constrained-fallback/WORKFLOW.md",
+)
 
 
 class SkillPackageTests(unittest.TestCase):
@@ -95,6 +119,71 @@ class SkillPackageTests(unittest.TestCase):
         self.assertIn("blur is not refraction", content)
         for tier in ("l0", "l1", "l2", "l3"):
             self.assertIn(tier, content)
+
+    def test_platform_adaptation_guides_and_workflows_cover_candidate_families(self) -> None:
+        for relative_path in PLATFORM_GUIDES:
+            guide = PLATFORM_DOCS / relative_path
+            self.assertTrue(guide.is_file(), f"Missing platform guide: {relative_path}")
+
+        matrix = (PLATFORM_DOCS / "capability-matrix.md").read_text(encoding="utf-8").lower()
+        for column in ("backdrop access", "refraction route", "shader", "masks and motion", "accessibility integration", "version / hardware gate"):
+            self.assertIn(column, matrix)
+        for source_domain in (
+            "developer.mozilla.org",
+            "developer.android.com",
+            "developer.apple.com",
+            "learn.microsoft.com",
+            "doc.qt.io",
+            "api.flutter.dev",
+            "docs.unity.com",
+            "dev.epicgames.com",
+        ):
+            self.assertIn(source_domain, matrix)
+
+        required_workflows = ("web-dom/WORKFLOW.md", "android-java/WORKFLOW.md") + PLATFORM_WORKFLOWS
+        for relative_path in required_workflows:
+            workflow = EXAMPLES / relative_path
+            self.assertTrue(workflow.is_file(), f"Missing platform workflow: {relative_path}")
+            content = workflow.read_text(encoding="utf-8").lower()
+            self.assertIn("validation", content, f"No validation instructions in {relative_path}")
+            self.assertTrue(any(tier in content for tier in ("l0", "l1", "l2", "l3")), f"No fidelity tier in {relative_path}")
+
+    def test_platform_documentation_links_resolve(self) -> None:
+        markdown_files = list(PLATFORM_DOCS.rglob("*.md")) + list(EXAMPLES.rglob("*.md"))
+        markdown_files += [
+            SKILL_DIR / "SKILL.md",
+            SKILL_DIR / "README.md",
+            SKILL_DIR / "INSTALL.md",
+            REPO_ROOT / "README.md",
+            REPO_ROOT / "GPT.md",
+            REPO_ROOT / "docs" / "README.md",
+            REPO_ROOT / "docs" / "skill-installation.md",
+        ]
+        link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+        failures = []
+        for markdown_file in markdown_files:
+            source = markdown_file.read_text(encoding="utf-8")
+            for destination in link_pattern.findall(source):
+                destination = destination.strip()
+                if not destination or destination.startswith(("#", "https://", "http://", "mailto:")):
+                    continue
+                destination = destination.split("#", 1)[0].split("?", 1)[0]
+                if not destination:
+                    continue
+                target = (markdown_file.parent / destination).resolve()
+                if not target.exists():
+                    failures.append(f"{markdown_file.relative_to(REPO_ROOT)} -> {destination}")
+        self.assertEqual(failures, [], "Broken local Markdown links:\n" + "\n".join(failures))
+
+    def test_chatgpt_desktop_personal_install_path_is_correct(self) -> None:
+        install = (SKILL_DIR / "INSTALL.md").read_text(encoding="utf-8")
+        root_guide = (REPO_ROOT / "docs" / "skill-installation.md").read_text(encoding="utf-8")
+        self.assertIn('$HOME\\.codex\\skills', install)
+        self.assertIn('%USERPROFILE%\\.codex\\skills\\liquid-glass\\SKILL.md', install)
+        self.assertIn('$HOME\\.codex\\skills', root_guide)
+        self.assertNotIn('~/.agents/skills', install + root_guide)
+        self.assertNotIn('$skill-installer', install + root_guide)
+        self.assertIn('backed up', install.lower())
 
 
 if __name__ == "__main__":
