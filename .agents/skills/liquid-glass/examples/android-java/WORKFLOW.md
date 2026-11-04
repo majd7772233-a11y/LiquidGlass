@@ -6,7 +6,7 @@
 
 The automated fixture contains Gradle Android project files, AndroidManifest.xml, a Java MainActivity, an XML layout/drawable, and minSdk 23. Resolve the effective minSdk for the actual app variant. Inspect compileSdk, targetSdk, AGP, Gradle, JDK, Java/Kotlin target, current dependencies, and device runtime via \`Build.VERSION.SDK_INT\` separately. Do not infer minSdk from compileSdk or targetSdk.
 
-## 2. Strategy: preserve the user's baseline
+## 2. Strategy decision: preserve the user's baseline
 
 For an **existing app**, do not change minSdk to unlock API 31/33 effects. Use runtime checks so API 33+ devices can take an AGSL path while older supported devices take a compatible route. For a **new app**, obey an explicit minSdk. If the user did not supply one, explain the API-33 RuntimeShader advantage and ask for the intended Android baseline/device range before changing Gradle.
 
