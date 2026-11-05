@@ -49,14 +49,24 @@ class SkillReleasePackageTests(unittest.TestCase):
                 self.assertTrue(all(name.startswith("liquid-glass/") for name in names))
                 self.assertFalse(any(name.endswith(".app.json") for name in names))
                 self.assertFalse(any(name.lower().endswith((".png", ".jpg", ".jpeg", ".mp4", ".apk")) for name in names))
+
                 version = archive.read("liquid-glass/VERSION").decode("utf-8").strip()
                 manifest = json.loads(archive.read("liquid-glass/manifest.json"))
                 self.assertEqual(manifest["version"], version)
                 self.assertEqual(manifest["entrypoint"], "SKILL.md")
                 self.assertFalse(manifest["package_policy"]["private_plugin_binding_included"])
                 self.assertFalse(manifest["package_policy"]["user_supplied_visual_references_included"])
+
                 skill = archive.read("liquid-glass/SKILL.md").decode("utf-8")
                 self.assertIn("references/project-docs/platform-adaptation/README.md", skill)
+
+                listed_hashes = manifest["sha256"]
+                for path, expected in listed_hashes.items():
+                    actual = hashlib.sha256(archive.read("liquid-glass/" + path)).hexdigest()
+                    self.assertEqual(actual, expected, path)
+                self.assertEqual(set(listed_hashes) | {"manifest.json"}, {
+                    name.removeprefix("liquid-glass/") for name in names
+                })
 
     def test_zip_build_is_reproducible(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
