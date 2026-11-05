@@ -79,6 +79,12 @@ class SkillReleasePackageTests(unittest.TestCase):
                 hashlib.sha256(second.read_bytes()).hexdigest(),
             )
 
+    def test_private_studio_package_is_not_uploaded_as_a_public_workflow_artifact(self) -> None:
+        workflow = (REPO_ROOT / ".github" / "workflows" / "skill-validation.yml").read_text(encoding="utf-8")
+        self.assertIn("Build and validate private Studio plugin (ephemeral only)", workflow)
+        self.assertNotIn("Upload private Studio plugin archive", workflow)
+        self.assertNotIn("liquid-glass-studio-plugin", workflow)
+
     def test_studio_and_skill_versions_are_aligned(self) -> None:
         skill_version = (SKILL_ROOT / "VERSION").read_text(encoding="utf-8").strip()
         plugin = json.loads(

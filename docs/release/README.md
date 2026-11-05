@@ -53,7 +53,7 @@ Studio is already installed as a private personal plugin and its actual @Liquid 
 
     python studio/scripts/build_plugin_package.py --output dist/liquid-glass-studio-private.zip
 
-That archive contains the account-bound .app.json GitHub connector binding. Treat it as private account data: do not attach it to a public GitHub Release or upload it to a public plugin directory. The public repository contains the manifest and connector identifier but no access token or credential.
+That archive contains the account-bound .app.json GitHub connector binding. Treat it as private account data: do not attach it to a public GitHub Release, upload it as a workflow artifact, or place it in a public plugin directory. CI runs the Studio package builder in an ephemeral runner only to validate package structure; it does not publish or upload that ZIP. The public repository contains the manifest and connector identifier but no access token or credential.
 
 ## Versioning and release gates
 

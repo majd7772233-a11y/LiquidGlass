@@ -318,10 +318,11 @@ Acceptance:
 
 **Verified packaging CI evidence (2026-11-05):**
 - [x] [Packaging workflow run 42035765245](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245) completed successfully on commit `5055bad4277767d8297ecc617121432204f65215`.
-- [x] Linux: 8 Skill tests, 4 Studio package tests, 10 reference/Phase 6 contract tests, and 4 release-package tests passed; Python compilation, both package builders, project inventory smoke test, and both artifact uploads passed.
+- [x] Linux: 8 Skill tests, 4 Studio package tests, 10 reference/Phase 6 contract tests, and 4 release-package tests passed; Python compilation, both package builders, project inventory smoke test, and standalone Skill artifact upload passed. The private Studio ZIP is only built for validation and is not a public release asset.
 - [x] Windows: standalone ZIP build, checkout install, update/backup preservation, scoped uninstall, and ZIP-based install/uninstall all passed.
 - [x] [Standalone Skill build artifact](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245) — artifact `liquid-glass-skill-0.1.0`, ID `13418157318`, 101,759 bytes, 14-day retention.
 - [x] The downloaded package was inspected: 49 ZIP entries, 48 SHA-256-listed files, no hash mismatches, and no bundled reference images/video, APK, or private `.app.json` binding.
+- [x] CI policy tightened: the private Studio archive is built in an ephemeral runner and is no longer uploaded as a downloadable workflow artifact.
 
 **Release boundary:**
 - The standalone Skill package version is 0.1.0; Studio's private package remains 0.1.0. No public GitHub Release or stable tag exists yet.
