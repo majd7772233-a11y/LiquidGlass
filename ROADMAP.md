@@ -25,7 +25,7 @@ A requested roadmap phase is one complete delivery unit. The agent must finish e
 | 4. Liquid Glass Studio workflow | Complete | Private ChatGPT execution twin, seven workflow contracts, shared knowledge, verified GitHub binding, and user-confirmed host invocation |
 | 5. Reference implementations | Complete | Runnable WebGL2 and Android Java/GLES2 L2/L3 demos with automated browser/emulator builds and captured evidence |
 | 6. Validation, accessibility, and performance | In progress | Browser/emulator quality gates, accessibility coverage, reproducible profiling protocol; physical-device evidence remains outstanding |
-| 7. Packaging and release | Not started | Versioned, documented, installable deliverables |
+| 7. Packaging and release | In progress | Versioned self-contained Skill package, private Studio setup, Windows install CI; stable tag awaits maintainer-owned Phase 6 device evidence |
 
 ## Phase 0 — Repository and reference baseline
 
@@ -271,9 +271,9 @@ Acceptance:
 - [x] Known platform and hardware limitations are explicit in docs and generated reports.
 
 **Remaining external validation before release:**
-- [ ] Run the Android profiler on physical low/mid-range and higher-tier GPUs; collect real GPU duration/counters, total memory/overdraw, sustained thermal and battery-delta measurements.
-- [ ] Perform human TalkBack/screen-reader speech, switch-access, magnification, and visual reference review on representative physical devices.
-- [ ] Validate WebGL2 behavior and GPU timing on a physical browser/GPU (the current headless CI uses SwiftShader).
+- [ ] **Maintainer-owned (delegated to the user):** run the Android profiler on physical low/mid-range and higher-tier GPUs; collect real GPU duration/counters, total memory/overdraw, sustained thermal and battery-delta measurements.
+- [ ] **Maintainer-owned (delegated to the user):** perform human TalkBack/screen-reader speech, switch-access, magnification, and visual reference review on representative physical devices.
+- [ ] **Maintainer-owned (delegated to the user):** validate WebGL2 behavior and GPU timing on a physical browser/GPU (the current headless CI uses SwiftShader).
 
 **Verified CI evidence (2026-11-04):**
 - [x] [WebGL2 browser validation job 126817477347](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/41899401878/job/126817477347) passed on the unchanged WebGL2 bright-scene/accessibility implementation. It emitted the responsive capture matrix, L0/L1 fallback captures, and JSON diagnostics.
@@ -295,20 +295,41 @@ Acceptance:
 
 ## Phase 7 — Packaging and release
 
-**Goal:** publish maintainable, versioned deliverables.
+<badge>In progress</badge>
 
-Tasks:
-- Finalize the Skill package layout and install/update/uninstall documentation.
-- Finalize plugin packaging and user-facing setup instructions.
-- Add versioning, changelog, license/provenance notes, and contribution guidance.
-- Verify public links and installation instructions from a clean environment.
-- Tag a release only after all required acceptance criteria pass.
+**Goal:** publish maintainable, versioned, installable deliverables without redistributing uncleared reference assets or private account bindings.
 
-Acceptance:
-- The Skill can be installed from a clean supported environment.
-- The plugin can be installed or enabled using the verified supported workflow.
-- Documentation matches the shipped files and verified behavior.
-- Release notes identify supported platform families and known limitations.
+**Delivered packaging work:**
+- [x] Add strict SemVer version metadata for the standalone Skill and keep it aligned with the existing private Studio plugin manifest.
+- [x] Build a self-contained Skill ZIP with bundled canonical project documentation, rewritten repository-relative links, and SHA-256 inventory manifest.
+- [x] Add PowerShell install/update/uninstall scripts. Updates stage and verify the new folder, preserve the previous version in a timestamped backup, and never remove sibling Skills.
+- [x] Add package tests for archive inventory, documentation-link closure, version alignment, asset/private-binding exclusion, and deterministic ZIP output.
+- [x] Add a Windows clean-runner CI job for checkout installation, update/backup behavior, scoped uninstall, and installation from the built ZIP.
+- [x] Add changelog, contribution guidance, license boundary, asset provenance notes, and end-user release/setup documentation.
+- [x] Finalize the private Studio setup/update guide. The existing personal Studio plugin (0.1.0) and its GitHub binding remain verified; its package is explicitly not a public plugin artifact.
+
+**Acceptance evidence:**
+- [x] The Skill archive is a single top-level liquid-glass/ folder with a valid SKILL.md, strict version, bundled platform references, installation scripts, license/provenance notices, and SHA-256 manifest.
+- [x] The package builder checks all local Markdown links and produces a reproducible archive.
+- [x] Windows CI installs from both the repository and the ZIP, tests update backup preservation, and removes only the Skill folder while preserving an unrelated Skill.
+- [x] Studio setup instructions match the verified existing private account installation and explicitly describe the GitHub connector and privacy boundary.
+- [x] Release notes list the supported Skill host target and known platform/performance limitations.
+
+**Release boundary:**
+- The standalone Skill package version is 0.1.0; Studio's private package remains 0.1.0. No public GitHub Release or stable tag exists yet.
+- A stable tag is deliberately withheld until the maintainer supplies the physical-device evidence listed in Phase 6. CI packaging does not certify real Android GPU timing, phone battery/thermal behavior, human accessibility, or physical-browser GPU timing.
+- The repository currently grants only the limited personal Skill installation permission in LICENSE, not a general open-source redistribution license. Supplied visual references are excluded from generated packages because their redistribution permissions are not established.
+- The private Studio archive contains the account-bound .app.json GitHub connector binding and must never be attached to a public release.
+
+**Deliverables:**
+- [x] Skill package builder (scripts/build_skill_package.py) and package tests (scripts/tests/test_release_package.py).
+- [x] Skill install/update/uninstall scripts (.agents/skills/liquid-glass/scripts/).
+- [x] Windows clean-install workflow (.github/workflows/skill-validation.yml).
+- [x] Standalone Skill installation guide (.agents/skills/liquid-glass/INSTALL.md).
+- [x] Studio setup and private update guide (studio/INSTALL.md).
+- [x] Packaging and release guide (docs/release/README.md).
+- [x] CHANGELOG.md, CONTRIBUTING.md, LICENSE, and PROVENANCE.md.
+- [ ] Publish a stable tag and GitHub Release after all Phase 6 maintainer-owned physical-device acceptance evidence has been recorded.
 
 ## Global definition of done
 

@@ -30,6 +30,8 @@ jobs:
           python -m py_compile studio/tests/test_studio_package.py
           python -m py_compile examples/tests/test_reference_demos.py
           python -m py_compile examples/tests/test_phase6_validation.py
+          python -m py_compile scripts/build_skill_package.py
+          python -m py_compile scripts/tests/test_release_package.py
 
       - name: Run Skill package and platform adaptation tests
         run: python -m unittest discover -s .agents/skills/liquid-glass/tests -v
@@ -51,7 +53,80 @@ jobs:
       - name: Run runnable reference demo contract tests
         run: python -m unittest discover -s examples/tests -v
 
+      - name: Run release package tests
+        run: python -m unittest discover -s scripts/tests -v
+
+      - name: Build standalone Skill release archive
+        run: python scripts/build_skill_package.py --output /tmp/liquid-glass-skill.zip
+
+      - name: Upload standalone Skill archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: liquid-glass-skill-0.1.0
+          path: /tmp/liquid-glass-skill.zip
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Run read-only project inventory smoke test
         run: |
           python .agents/skills/liquid-glass/scripts/inspect_project.py .
           python studio/scripts/build_plugin_package.py --check
+
+  windows-install-smoke:
+    name: Install, update, and uninstall from a clean Windows runner
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build the standalone Skill archive
+        run: python scripts/build_skill_package.py --output "$env:RUNNER_TEMP\liquid-glass-skill.zip"
+        shell: pwsh
+
+      - name: Exercise checkout install, update backup, and scoped uninstall
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $installRoot = Join-Path $env:RUNNER_TEMP "liquid-glass-checkout-install"
+          New-Item -ItemType Directory -Path $installRoot -Force | Out-Null
+          $otherSkill = Join-Path $installRoot "unrelated-skill"
+          New-Item -ItemType Directory -Path $otherSkill -Force | Out-Null
+          Set-Content -LiteralPath (Join-Path $otherSkill "keep.txt") -Value "preserve"
+
+          $installer = Join-Path $PWD ".agents\skills\liquid-glass\scripts\install.ps1"
+          $uninstaller = Join-Path $PWD ".agents\skills\liquid-glass\scripts\uninstall.ps1"
+          & $installer -InstallRoot $installRoot
+          $target = Join-Path $installRoot "liquid-glass"
+          if (-not (Test-Path (Join-Path $target "SKILL.md"))) { throw "Checkout install did not create SKILL.md." }
+
+          Set-Content -LiteralPath (Join-Path $target "old-install-marker.txt") -Value "backup-check"
+          & $installer -InstallRoot $installRoot
+          $backup = Get-ChildItem -LiteralPath $installRoot -Directory -Filter "liquid-glass.backup-*" |
+            Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $backup) { throw "Update did not preserve the previous installation." }
+          if (-not (Test-Path (Join-Path $backup.FullName "old-install-marker.txt"))) { throw "Backup does not contain the old installation." }
+
+          & $uninstaller -InstallRoot $installRoot -ConfirmUninstall
+          if (Test-Path $target) { throw "Uninstall left the liquid-glass target behind." }
+          if (-not (Test-Path (Join-Path $otherSkill "keep.txt"))) { throw "Uninstall removed an unrelated Skill." }
+
+      - name: Exercise install and uninstall from the generated ZIP
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $archive = Join-Path $env:RUNNER_TEMP "liquid-glass-skill.zip"
+          $extractRoot = Join-Path $env:RUNNER_TEMP "liquid-glass-package-extracted"
+          $installRoot = Join-Path $env:RUNNER_TEMP "liquid-glass-archive-install"
+          Expand-Archive -LiteralPath $archive -DestinationPath $extractRoot -Force
+          $package = Join-Path $extractRoot "liquid-glass"
+          & (Join-Path $package "scripts\install.ps1") -InstallRoot $installRoot
+          $target = Join-Path $installRoot "liquid-glass"
+          if (-not (Test-Path (Join-Path $target "SKILL.md"))) { throw "Archive install did not create SKILL.md." }
+          if (-not (Test-Path (Join-Path $target "references\project-docs\platform-adaptation\README.md"))) { throw "Archive documentation is incomplete." }
+          & (Join-Path $package "scripts\uninstall.ps1") -InstallRoot $installRoot -ConfirmUninstall
+          if (Test-Path $target) { throw "Archive uninstaller failed." }
