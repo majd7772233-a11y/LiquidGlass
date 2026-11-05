@@ -1,7 +1,7 @@
 # Install Liquid Glass in ChatGPT Desktop for Windows
 
 This is the verified install target for the Microsoft Store version of ChatGPT
-Desktop. The default personal Skills directory is $HOME\.codex\skills. The
+Desktop. The default personal Skills directory is $HOME\.codex\skills. The installed entry point is %USERPROFILE%\.codex\skills\liquid-glass\SKILL.md. The
 installer uses the current Windows profile automatically; it does not require
 a hard-coded username or administrator rights.
 
