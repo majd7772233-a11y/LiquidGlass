@@ -45,8 +45,8 @@ class StudioPackageTests(unittest.TestCase):
                 manifest = json.loads(archive.read("plugin.json"))
                 app = json.loads(archive.read(".app.json"))
                 self.assertEqual(manifest["name"], "liquid-glass-studio")
-        skill_version = (REPO_ROOT / ".agents" / "skills" / "liquid-glass" / "VERSION").read_text(encoding="utf-8").strip()
-        self.assertEqual(manifest["version"], skill_version)
+                skill_version = (REPO_ROOT / ".agents" / "skills" / "liquid-glass" / "VERSION").read_text(encoding="utf-8").strip()
+                self.assertEqual(manifest["version"], skill_version)
                 self.assertEqual(manifest["extensions"]["com.openai"]["apps"], "./.app.json")
                 self.assertEqual(app["apps"]["github"]["id"], "connector_76869538009648d5b282a4bb21c3d157")
 

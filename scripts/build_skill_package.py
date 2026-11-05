@@ -136,6 +136,8 @@ def build_package(output: Path) -> Path:
             relative = package_file.relative_to(staging_root)
             if relative.parts[:2] == ("references", "project-docs"):
                 source_file = DOCS_SOURCE / Path(*relative.parts[2:])
+            elif relative.parts[0] in ("CHANGELOG.md", "PROVENANCE.md"):
+                source_file = REPO_ROOT / relative
             else:
                 source_file = SKILL_SOURCE / relative
             if not source_file.is_file():
