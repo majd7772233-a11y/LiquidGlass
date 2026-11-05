@@ -17,8 +17,10 @@ installing. Python 3.9 or later is required for this path.
 
 ## Install from a standalone package
 
-Download the versioned liquid-glass-skill ZIP from the project's release
-artifacts, extract it, then run:
+Download the `liquid-glass-skill-0.1.0` artifact from [successful packaging
+workflow run 42035765245](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245)
+(artifact ID `13418157318`; retained for 14 days). Extract the artifact ZIP,
+then extract the inner `liquid-glass-skill.zip` package and run:
 
     .\liquid-glass\scripts\install.ps1
 

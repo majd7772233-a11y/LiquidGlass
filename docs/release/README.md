@@ -2,7 +2,7 @@
 
 Current package version: **0.1.0** (prepared; no stable Git tag or GitHub Release has been published).
 
-This page describes the two deliverables and the release gates. The standalone Skill ZIP is suitable for personal installation. Liquid Glass Studio remains a private, account-bound ChatGPT plugin; its archive is not a public plugin distribution.
+This page describes the two deliverables and the release gates. The standalone Skill ZIP is a versioned package prepared for installation in the maintainer's verified ChatGPT Desktop environment. Liquid Glass Studio remains a private, account-bound ChatGPT plugin; its archive is not a public plugin distribution.
 
 ## Build the standalone Skill
 
@@ -15,6 +15,10 @@ The builder validates the package, copies the canonical platform documentation i
 Run its package tests:
 
     python -m unittest discover -s scripts/tests -v
+
+## Current verified build artifact
+
+The standalone `liquid-glass-skill-0.1.0.zip` artifact was built and uploaded by [successful packaging workflow run 42035765245](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245). Open the run and download the `liquid-glass-skill-0.1.0` artifact (ID `13418157318`; retained for 14 days). The artifact wraps the package ZIP; extract the artifact ZIP first, then extract or run the installer from the inner `liquid-glass-skill.zip` file. A stable GitHub Release and version tag have not been published.
 
 ## Install from a clean checkout or ZIP
 
@@ -57,4 +61,4 @@ The standalone Skill version is in [.agents/skills/liquid-glass/VERSION](../../.
 
 A stable Git tag and GitHub Release must wait until all acceptance criteria in the roadmap are met. Phase 6 physical-device checks remain maintainer-owned: real GPU timing on representative Android devices and a physical WebGL browser, battery/thermal evidence, and human TalkBack/switch-access/magnification review. CI uses software rendering and emulators, and cannot close those gates. No stable release is implied by a passing package build or clean-install CI run.
 
-Before publishing, review [LICENSE](../../LICENSE) and [PROVENANCE.md](../../PROVENANCE.md). The current notice grants personal Skill installation only; it does not grant general open-source redistribution rights.
+Before publishing, review [LICENSE](../../LICENSE) and [PROVENANCE.md](../../PROVENANCE.md). No general open-source, modification, or redistribution license has been selected. The `LICENSE` file is a rights-status notice, not a standard-form license; choose and review an appropriate license before allowing public reuse or redistribution.

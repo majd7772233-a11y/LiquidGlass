@@ -18,4 +18,4 @@ APK files, emulator screenshots, browser screenshots, profiler traces, and GitHu
 
 ## License boundary
 
-See [LICENSE](LICENSE). No general open-source or redistribution grant is made by this repository at this time. The limited personal Skill installation permission does not apply to visual reference assets or private connector data.
+See [LICENSE](LICENSE). No general open-source, modification, or redistribution license has been selected for project-authored material. The user-supplied visual references and private connector data have separate restrictions and are excluded from generated packages.

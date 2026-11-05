@@ -315,10 +315,18 @@ Acceptance:
 - [x] Studio setup instructions match the verified existing private account installation and explicitly describe the GitHub connector and privacy boundary.
 - [x] Release notes list the supported Skill host target and known platform/performance limitations.
 
+
+**Verified packaging CI evidence (2026-11-05):**
+- [x] [Packaging workflow run 42035765245](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245) completed successfully on commit `5055bad4277767d8297ecc617121432204f65215`.
+- [x] Linux: 8 Skill tests, 4 Studio package tests, 10 reference/Phase 6 contract tests, and 4 release-package tests passed; Python compilation, both package builders, project inventory smoke test, and both artifact uploads passed.
+- [x] Windows: standalone ZIP build, checkout install, update/backup preservation, scoped uninstall, and ZIP-based install/uninstall all passed.
+- [x] [Standalone Skill build artifact](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245) — artifact `liquid-glass-skill-0.1.0`, ID `13418157318`, 101,759 bytes, 14-day retention.
+- [x] The downloaded package was inspected: 49 ZIP entries, 48 SHA-256-listed files, no hash mismatches, and no bundled reference images/video, APK, or private `.app.json` binding.
+
 **Release boundary:**
 - The standalone Skill package version is 0.1.0; Studio's private package remains 0.1.0. No public GitHub Release or stable tag exists yet.
 - A stable tag is deliberately withheld until the maintainer supplies the physical-device evidence listed in Phase 6. CI packaging does not certify real Android GPU timing, phone battery/thermal behavior, human accessibility, or physical-browser GPU timing.
-- The repository currently grants only the limited personal Skill installation permission in LICENSE, not a general open-source redistribution license. Supplied visual references are excluded from generated packages because their redistribution permissions are not established.
+- The repository has not selected a general open-source or redistribution license; LICENSE is a rights-status notice, not a standard-form license. Supplied visual references are excluded from generated packages because their redistribution permissions are not established.
 - The private Studio archive contains the account-bound .app.json GitHub connector binding and must never be attached to a public release.
 
 **Deliverables:**

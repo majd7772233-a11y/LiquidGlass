@@ -1,9 +1,15 @@
-LIQUIDGLASS PROJECT — ALL RIGHTS RESERVED
+LIQUIDGLASS PROJECT — NO GENERAL LICENSE GRANT
 
-Copyright (c) 2026 the LiquidGlass project authors.
+Copyright (c) 2026 LiquidGlass project contributors.
 
-No open-source license is granted by this repository at this time.
+This file is a project rights-status notice, not a standard-form software
+license. No general open-source, modification, redistribution, sublicensing,
+or commercial-use license has been selected or granted for project-authored
+materials in this repository. Contact the project maintainer before reusing,
+modifying, or redistributing those materials. All rights are reserved unless
+separate written permission or another applicable license says otherwise.
 
-Permission is granted to download and install the standalone Liquid Glass Skill for the recipient's own personal evaluation and use. This limited permission does not grant the right to redistribute the package, publish modified copies, sublicense it, or use project materials as a separately distributed product. All other rights are reserved. For additional permissions, contact the repository owner through the project's GitHub page.
-
-This notice does not grant rights to user-supplied visual references, third-party trademarks, vendor documentation, or other materials identified separately in PROVENANCE.md. Those materials remain subject to their respective rights holders.
+This notice does not determine the rights to user-supplied visual references,
+third-party trademarks, vendor documentation, or other materials identified
+separately in PROVENANCE.md. Those materials remain subject to their respective
+rights holders.
