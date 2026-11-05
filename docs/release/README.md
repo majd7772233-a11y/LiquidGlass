@@ -18,7 +18,7 @@ Run its package tests:
 
 ## Current verified build artifact
 
-The standalone `liquid-glass-skill-0.1.0.zip` artifact was built and uploaded by [successful packaging workflow run 42035765245](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42035765245). Open the run and download the `liquid-glass-skill-0.1.0` artifact (ID `13418157318`; retained for 14 days). The artifact wraps the package ZIP; extract the artifact ZIP first, then extract or run the installer from the inner `liquid-glass-skill.zip` file. A stable GitHub Release and version tag have not been published.
+The standalone `liquid-glass-skill-0.1.0.zip` artifact was built and uploaded by [successful packaging workflow run 42035765245](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42036225898). Open the run and download the `liquid-glass-skill-0.1.0` artifact (ID `13418157318`; retained for 14 days). The artifact wraps the package ZIP; extract the artifact ZIP first, then extract or run the installer from the inner `liquid-glass-skill.zip` file. A stable GitHub Release and version tag have not been published.
 
 ## Install from a clean checkout or ZIP
 
