@@ -317,12 +317,12 @@ Acceptance:
 
 
 **Verified packaging CI evidence (2026-11-05):**
-- [x] [Packaging workflow run 42036225898](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42036225898) completed successfully on commit `310bf6f53425e3c7ac20d9a13af404a0c4a70987`.
-- [x] Linux: 8 Skill tests, 4 Studio package tests, 10 reference/Phase 6 contract tests, and 4 release-package tests passed; Python compilation, both package builders, project inventory smoke test, and standalone Skill artifact upload passed. The private Studio ZIP is only built for validation and is not a public release asset.
+- [x] [Windows/Linux packaging workflow run 42036825924](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42036825924) completed successfully on commit `4c04a7784a265d8433ab9f91618c2155ea8ddfda`; both validation jobs passed.
+- [x] Linux: 8 Skill tests, 4 Studio package tests, 10 reference/Phase 6 contract tests, and 5 release-package tests passed; Python compilation, package builders, project inventory smoke test, and standalone Skill artifact upload passed.
 - [x] Windows: standalone ZIP build, checkout install, update/backup preservation, scoped uninstall, and ZIP-based install/uninstall all passed.
-- [x] [Standalone Skill build artifact](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42036225898) — artifact `liquid-glass-skill-0.1.0`, ID `13418687016`, 102,147 bytes; the inner Skill ZIP is 107,125 bytes, 14-day retention.
-- [x] The downloaded package was inspected: 49 ZIP entries, 48 SHA-256-listed files, no hash mismatches, and no bundled reference images/video, APK, or private `.app.json` binding.
-- [x] CI policy tightened: the private Studio archive is built in an ephemeral runner and is no longer uploaded as a downloadable workflow artifact.
+- [x] [Standalone Skill build artifact](https://github.com/majd7772233-a11y/LiquidGlass/actions/runs/42036825924) — `liquid-glass-skill-0.1.0`, artifact ID `13418124335`, 102,172 bytes; 14-day retention.
+- [x] Downloaded package inspection: inner ZIP 107,142 bytes, SHA-256 `4442788ba6cbe108b39cbc71acba5d7618a95eded506fc77195071b5a201cb48`; 49 entries with 48 SHA-256 manifest entries, zero mismatches, and no bundled reference media, APKs, or private `.app.json` binding.
+- [x] Privacy hardening: CI builds and validates the private Studio package in an ephemeral runner but uploads only the standalone Skill artifact. No Studio plugin archive is emitted as a downloadable artifact by the current workflow.
 
 **Release boundary:**
 - The standalone Skill package version is 0.1.0; Studio's private package remains 0.1.0. No public GitHub Release or stable tag exists yet.
