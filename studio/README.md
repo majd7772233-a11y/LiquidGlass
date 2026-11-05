@@ -22,8 +22,9 @@ Studio is a private, app-backed Agent Plugin containing a portable Skill and a v
 - [Studio Skill source](package-source/skills/liquid-glass-studio/SKILL.md)
 - [Package builder](scripts/build_plugin_package.py)
 - [Package tests](tests/test_studio_package.py)
+- [User setup and private update instructions](INSTALL.md)
 
-The builder copies canonical Skill references and platform documentation into the plugin archive. Rebuild it after changing shared knowledge so the two twins do not drift.
+The builder copies canonical Skill references and platform documentation into the plugin archive, together with the repository license/provenance notices. Rebuild it after changing shared knowledge so the two twins do not drift. The private archive is account-bound and must not be published as a public plugin.
 
 ## Build the private plugin archive
 
@@ -55,3 +56,8 @@ The actual `@Liquid Glass Studio` invocation has now been tested by the user in 
 The plugin requires the user's existing GitHub connector to be available and authorized for the target repository. Its permissions remain governed by ChatGPT's GitHub connection and permission settings. Studio must not assume access to local files, private repositories not granted to GitHub, Actions logs without permission, or a local emulator/device.
 
 The package uses a Skill plus a connected app. Its named Studio operations are workflow contracts executed by the agent using GitHub's supported actions; they are not advertised as a custom remote MCP server. A hosted Site/MCP endpoint is intentionally not fabricated.
+
+
+## User-facing setup
+
+See [INSTALL.md](INSTALL.md) for opening the existing private plugin, checking its GitHub connection, rebuilding a private update, and the account/privacy boundaries.

@@ -119,6 +119,8 @@ def build_package(output: Path) -> Path:
             "Do not edit copies directly; update the source and rebuild the plugin.\n",
             encoding="utf-8",
         )
+        shutil.copy2(REPO_ROOT / "LICENSE", root / "LICENSE")
+        shutil.copy2(REPO_ROOT / "PROVENANCE.md", root / "PROVENANCE.md")
         validate_package(root)
         if output.exists():
             output.unlink()

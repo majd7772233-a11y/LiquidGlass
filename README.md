@@ -16,6 +16,8 @@ This is not a synonym for ordinary glassmorphism. The target combines background
 - [Codex Skill](.agents/skills/liquid-glass/SKILL.md) — platform-neutral coding Skill for implementation and review.
 - [Skill installation](.agents/skills/liquid-glass/INSTALL.md) — repository-local and personal installation/update instructions.
 - [Liquid Glass Studio](studio/README.md) — ChatGPT-side execution twin, architecture, GitHub binding, and private plugin package.
+- [Packaging and release](docs/release/README.md) — versioned Skill ZIP, Studio private package, install/update/uninstall, and release gates.
+- [Changelog](CHANGELOG.md), [contribution guide](CONTRIBUTING.md), [license notice](LICENSE), and [asset provenance](PROVENANCE.md).
 
 ## Working principle
 
